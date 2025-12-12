@@ -39,55 +39,54 @@ router.get('/', async (req, res) => {
             if (!Pair_Code_By_Mbuvi_Tech.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
-               const custom = "GURUXBOT";
-                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num,custom);
+                const custom = "GURUXBOT";
+                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num, custom);
                 if (!res.headersSent) {
                     await res.send({ code });
                 }
             }
 
             Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
+
             Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
                 const { connection, lastDisconnect } = s;
                 if (connection === 'open') {
-                    
-                    // ----------------------------------------------------------------------
-                    // 🚨 CRASH FIX: REMOVED MAIN BOT ACTIONS
-                    // The following lines were causing the crash and are now removed:
-                    // await Pair_Code_By_Mbuvi_Tech.newsletterFollow("");
-                    // await Pair_Code_By_Mbuvi_Tech.groupAcceptInvite("");
-                    // ----------------------------------------------------------------------
-                    
                     await delay(5000);
                     let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     await delay(1000);
                     let b64data = Buffer.from(data).toString('base64');
-                    // This sends the key to your own number via WhatsApp (Owner's number in this context)
-                    let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'Xguru~' + b64data });
 
+                    // Send session key to owner's number
+                    let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'X-GURU~' + b64data });
+
+                    // Customized cool message
                     let Mbuvi_MD_TEXT = `
-        
-╔════════════════════
-║『 SESSION CONNECTED』
-║ 🟢 BOT: June x
-║ 🟢 OWNER: supreme
+╔═════════════════════
+║ 『 SESSION CONNECTED 』
+║ 🟢 BOT NAME: X-GURU
+║ 🟢 OWNER: GuruTech
 ║ 🟢 TYPE: Base64
-╚════════════════════
+╠═════════════════════
+║ 💡 Fun Feature: Your bot is ready to blast messages!
+║ ⚡ Pro Tip: Keep your session safe & secure.
+║ 🎯 Status: Fully operational and shining ✨
+╚═════════════════════
 
-Don't Forget To Give Star⭐ To My Repo
-______________________________`;
+🚀 Show some love and star⭐ the repo!
+💬 Your X-GURU bot is now online and ready for action!
+`;
 
                     await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: Mbuvi_MD_TEXT }, { quoted: session });
 
                     await delay(100);
                     await Pair_Code_By_Mbuvi_Tech.ws.close();
-                    // This sends the key to your own number and then shuts down the pairing server connection
                     return await removeFile('./temp/' + id);
                 } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
                     await delay(10000);
                     Mbuvi_MD_PAIR_CODE();
                 }
             });
+
         } catch (err) {
             console.log('Service restarted');
             await removeFile('./temp/' + id);
