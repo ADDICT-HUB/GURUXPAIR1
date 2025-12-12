@@ -5,8 +5,7 @@
   <title>X-GURU SESSION</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -22,126 +21,85 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background-color: #000;
+      background: #000;
       font-family: 'Exo 2', sans-serif;
       color: #e5f5f1;
-      position: relative;
       overflow-x: hidden;
+      position: relative;
     }
 
-    /* Glowing Background Elements */
-    .glowing-bg {
+    /* 🌫️ Animated Smoke Background */
+    .smoke-bg {
       position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      z-index: -2;
       overflow: hidden;
+      z-index: -3;
     }
 
-    .glow-circle {
+    .smoke {
       position: absolute;
-      border-radius: 50%;
-      filter: blur(60px);
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0,120,255,0.15) 0%, rgba(0,0,0,0.8) 80%);
+      animation: drift 25s infinite linear;
+      filter: blur(120px);
+      opacity: 0.9;
+    }
+
+    .smoke:nth-child(2) {
+      animation-duration: 35s;
+      animation-direction: reverse;
       opacity: 0.7;
-      animation: float 15s infinite linear;
     }
 
-    .glow-circle:nth-child(1) {
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(0, 255, 170, 0.8) 0%, rgba(0, 255, 170, 0) 70%);
-      top: 10%;
-      left: 10%;
-      animation-duration: 20s;
+    .smoke:nth-child(3) {
+      animation-duration: 45s;
+      opacity: 0.5;
     }
 
-    .glow-circle:nth-child(2) {
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(0, 136, 255, 0.7) 0%, rgba(0, 136, 255, 0) 70%);
-      top: 60%;
-      right: 5%;
-      animation-duration: 25s;
+    @keyframes drift {
+      0% { transform: translate(-20%, -20%) scale(1); }
+      50% { transform: translate(20%, 20%) scale(1.3); }
+      100% { transform: translate(-20%, -20%) scale(1); }
     }
 
-    .glow-circle:nth-child(3) {
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(255, 0, 255, 0.5) 0%, rgba(255, 0, 255, 0) 70%);
-      bottom: 10%;
-      left: 20%;
-      animation-duration: 18s;
-    }
-
-    .glow-circle:nth-child(4) {
-      width: 450px;
-      height: 450px;
-      background: radial-gradient(circle, rgba(0, 255, 255, 0.6) 0%, rgba(0, 255, 255, 0) 70%);
-      top: 20%;
-      right: 20%;
-      animation-duration: 22s;
-    }
-
-    .scan-lines {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        to bottom,
-        transparent 50%,
-        rgba(0, 255, 170, 0.03) 50%
-      );
-      background-size: 100% 4px;
-      z-index: -1;
-      opacity: 0.3;
-      pointer-events: none;
-    }
-
+    /* Grid Overlay */
     .grid-overlay {
       position: fixed;
       width: 100%;
       height: 100%;
       background-image:
-        linear-gradient(rgba(0, 255, 170, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 170, 0.05) 1px, transparent 1px);
-      background-size: 50px 50px;
+        linear-gradient(rgba(0,255,170,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,170,0.05) 1px, transparent 1px);
+      background-size: 55px 55px;
       z-index: -1;
-      opacity: 0.4;
-      pointer-events: none;
+      opacity: 0.35;
     }
 
-    @keyframes float {
-      0%, 100% { transform: translate(0,0) scale(1); }
-      25% { transform: translate(30px,40px) scale(1.1); }
-      50% { transform: translate(-20px,60px) scale(0.9); }
-      75% { transform: translate(40px,-30px) scale(1.05); }
-    }
-
-    /* ✨ NEW RICH GOLD + BLUE GLASS CONTAINER */
+    /* ✨ Premium Blue + Gold Glass Container */
     .container {
       width: 90%;
-      max-width: 800px;
-      padding: 2rem;
+      max-width: 780px;
+      padding: 2.2rem;
       border-radius: 25px;
       position: relative;
-      z-index: 1;
+      z-index: 2;
 
       background: linear-gradient(
         135deg,
-        rgba(10, 25, 47, 0.75) 0%,
-        rgba(0, 78, 255, 0.25) 40%,
-        rgba(255, 215, 0, 0.15) 100%
+        rgba(10, 25, 47, 0.85),
+        rgba(0, 78, 255, 0.25),
+        rgba(255, 215, 0, 0.12)
       );
-      backdrop-filter: blur(15px) saturate(180%);
-
-      border: 2px solid rgba(255, 215, 0, 0.4);
-
       box-shadow:
-        0 0 25px rgba(0, 115, 255, 0.45),
-        0 0 45px rgba(255, 215, 0, 0.35),
-        inset 0 0 20px rgba(0, 200, 255, 0.25),
-        inset 0 0 30px rgba(255, 215, 0, 0.25),
-        0 15px 50px rgba(0, 0, 0, 0.6);
+        0 0 30px rgba(0, 115, 255, 0.45),
+        0 0 50px rgba(255, 215, 0, 0.3),
+        inset 0 0 30px rgba(0, 200, 255, 0.25);
+      backdrop-filter: blur(15px) saturate(180%);
+      border: 2px solid rgba(255, 215, 0, 0.4);
     }
 
     /* Gold Shine Strip */
@@ -154,41 +112,43 @@
       width: 100%;
       background: linear-gradient(
         90deg,
-        rgba(255,215,0,1),
-        rgba(0,180,255,1),
-        rgba(255,215,0,1)
+        gold,
+        #008cff,
+        gold
       );
       background-size: 300% 100%;
-      animation: shimmer 3s infinite linear;
+      animation: shine 3s infinite linear;
     }
 
-    @keyframes shimmer {
+    @keyframes shine {
       0% { background-position: 0% 0; }
       100% { background-position: 300% 0; }
     }
 
+    /* Titles */
     .title {
       font-family: 'Orbitron';
-      font-size: 2.5rem;
+      font-size: 2.6rem;
       font-weight: 900;
       text-align: center;
       background: linear-gradient(90deg, #00ffaa, #0088ff);
       -webkit-background-clip: text;
       color: transparent;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.3rem;
     }
 
     .subtitle {
       text-align: center;
-      font-weight: 300;
       font-size: 1.2rem;
-      margin-bottom: 2.5rem;
+      font-weight: 300;
+      margin-bottom: 2.4rem;
     }
 
+    /* Buttons */
     .buttons-container {
       display: flex;
       justify-content: center;
-      gap: 1.5rem;
+      gap: 1.3rem;
       flex-wrap: wrap;
     }
 
@@ -209,9 +169,9 @@
     }
 
     .btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,255,170,0.4);
+      transform: translateY(-6px);
       background: rgba(0,255,170,0.2);
+      box-shadow: 0 12px 25px rgba(0,255,170,0.45);
     }
 
     .pulse {
@@ -225,15 +185,14 @@
     }
 
     .footer {
-      margin-top: 2rem;
       text-align: center;
+      margin-top: 2rem;
       opacity: 0.7;
     }
 
     @media (max-width: 768px) {
       .btn { width: 100%; max-width: 300px; }
-      .title { font-size: 2rem; }
-      .glow-circle { filter: blur(40px); }
+      .title { font-size: 2.1rem; }
     }
   </style>
 
@@ -242,24 +201,24 @@
 </head>
 <body>
 
-  <div class="glowing-bg">
-    <div class="glow-circle"></div>
-    <div class="glow-circle"></div>
-    <div class="glow-circle"></div>
-    <div class="glow-circle"></div>
+  <!-- Smoke Background -->
+  <div class="smoke-bg">
+    <div class="smoke"></div>
+    <div class="smoke"></div>
+    <div class="smoke"></div>
   </div>
 
-  <div class="scan-lines"></div>
   <div class="grid-overlay"></div>
 
+  <!-- Main Card -->
   <div class="container">
     <h1 class="title">X-GURU SESSION</h1>
     <p class="subtitle">Choose your preferred option below.</p>
 
     <div class="buttons-container">
-      <button onclick="window.open(`/pair`)" class="btn pulse"><i class="fas fa-link"></i> PAIR CODE</button>
-      <button onclick="window.open(`/qr`)" class="btn"><i class="fas fa-qrcode"></i> QR SCAN</button>
-      <button onclick="window.open(`https://github.com/vinpink2/JUNE-X/fork`)" class="btn"><i class="fab fa-github"></i> REPO FORK</button>
+      <button onclick="window.open('/pair')" class="btn pulse"><i class="fas fa-link"></i> PAIR CODE</button>
+      <button onclick="window.open('/qr')" class="btn"><i class="fas fa-qrcode"></i> QR SCAN</button>
+      <button onclick="window.open('https://github.com/vinpink2/JUNE-X/fork')" class="btn"><i class="fab fa-github"></i> REPO FORK</button>
     </div>
 
     <div class="footer">X-GURU © 2025 | Secure connection</div>
