@@ -1,244 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pair Code — X-GURU</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pair Code — X-GURU</title>
 
-  <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <style>
-    :root {
-      --bg-dark: #000000;
-      --bg-brown: #2b1e15;
-      --glass-color: rgba(255,255,255,0.05);
-      --glass-blur: 25px;
-      --gold: #d4af37;
-      --accent-white: #ffffff;
-      --card-radius: 25px;
-      --btn-hover: rgba(255,255,255,0.1);
-    }
+<style>
+:root {
+  --bg-dark: #000000;
+  --bg-brown: #2b1e15;
+  --glass-color: rgba(255,255,255,0.05);
+  --glass-blur: 22px;
+  --gold: #d4af37;
+  --accent-white: #ffffff;
+  --card-radius: 20px;
+  --btn-hover: rgba(255,255,255,0.1);
+}
 
-    * { box-sizing: border-box; margin:0; padding:0; }
-    html, body { height:100%; font-family:'Exo 2', sans-serif; }
-    body {
-      display:flex; justify-content:center; align-items:center;
-      background: linear-gradient(135deg, var(--bg-dark), var(--bg-brown));
-      overflow-x:hidden;
-      position:relative;
-    }
+/* Reset & Body */
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { height:100%; font-family:'Exo 2', sans-serif; }
+body {
+  display:flex; justify-content:center; align-items:center;
+  background: linear-gradient(135deg, var(--bg-dark), var(--bg-brown));
+  overflow-x:hidden;
+  position:relative;
+}
 
-    /* Animated Background */
-    .background-wave {
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.02) 0%, transparent 70%);
-      animation: wave 25s infinite linear;
-      filter: blur(120px);
-    }
-    .background-wave:nth-child(2) { animation-duration: 40s; opacity:0.6; filter: blur(180px); }
-    .background-wave:nth-child(3) { animation-duration: 60s; opacity:0.4; filter: blur(220px); }
+/* Animated Waves */
+.background-wave {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.02) 0%, transparent 70%);
+  animation: wave 25s infinite linear;
+  filter: blur(120px);
+}
+.background-wave:nth-child(2) { animation-duration: 40s; opacity:0.6; filter: blur(180px); }
+.background-wave:nth-child(3) { animation-duration: 60s; opacity:0.4; filter: blur(220px); }
 
-    @keyframes wave {
-      0% { transform: translate(-50%, -50%) rotate(0deg); }
-      50% { transform: translate(50%, 50%) rotate(180deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg); }
-    }
+@keyframes wave {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  50% { transform: translate(50%, 50%) rotate(180deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
 
-    /* Glass Card */
-    .card {
-      position: relative;
-      width: 100%;
-      max-width: 460px;
-      padding: 28px;
-      border-radius: var(--card-radius);
-      background: var(--glass-color);
-      backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-      border: 2px solid rgba(212,175,55,0.2);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.03);
-      overflow: hidden;
-      z-index: 1;
-      transition: transform 0.35s cubic-bezier(.2,.9,.3,1);
-    }
-    .card:hover { transform: translateY(-8px) scale(1.01); }
+/* Glass Card */
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  padding: 22px;
+  border-radius: var(--card-radius);
+  background: var(--glass-color);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 2px solid rgba(212,175,55,0.2);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.03);
+  overflow: hidden;
+  z-index: 1;
+  transition: transform 0.35s cubic-bezier(.2,.9,.3,1);
+}
+.card:hover { transform: translateY(-6px) scale(1.01); }
 
-    /* Gold Mirror Overlay */
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:inherit;
-      padding:2px;
-      background: linear-gradient(120deg, rgba(255,255,255,0.12), rgba(212,175,55,0.09), rgba(255,255,255,0.05));
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events:none;
-      filter: blur(8px);
-      opacity:0.95;
-    }
+/* Gold Mirror Overlay */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:2px;
+  background: linear-gradient(120deg, rgba(255,255,255,0.12), rgba(212,175,55,0.09), rgba(255,255,255,0.05));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events:none;
+  filter: blur(8px);
+  opacity:0.95;
+}
+.card::after{
+  content:"";
+  position:absolute;
+  top:-30%;
+  left:-10%;
+  width:140%;
+  height:70%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.12), rgba(0,0,0,0));
+  transform: rotate(-18deg);
+  filter: blur(12px) saturate(140%);
+  pointer-events:none;
+  opacity:0.6;
+}
 
-    .card::after{
-      content:"";
-      position:absolute;
-      top:-30%;
-      left:-10%;
-      width:140%;
-      height:70%;
-      background: linear-gradient(90deg, rgba(255,255,255,0.12), rgba(0,0,0,0));
-      transform: rotate(-18deg);
-      filter: blur(12px) saturate(140%);
-      pointer-events:none;
-      opacity:0.6;
-    }
+/* Header */
+.brand { text-align:center; margin-bottom:14px; }
+.brand h1 {
+  font-family:'Orbitron', sans-serif;
+  font-size:24px;
+  color: transparent;
+  background: linear-gradient(90deg, var(--accent-white), var(--gold));
+  -webkit-background-clip:text;
+  letter-spacing:1px;
+}
+.brand p { color: rgba(255,255,255,0.65); font-size:0.88rem; margin-bottom:8px; }
 
-    /* Header */
-    .brand { text-align:center; margin-bottom:16px; }
-    .brand h1 {
-      font-family:'Orbitron', sans-serif;
-      font-size:26px;
-      color: transparent;
-      background: linear-gradient(90deg, var(--accent-white), var(--gold));
-      -webkit-background-clip:text;
-      letter-spacing:1px;
-      margin-bottom:4px;
-    }
-    .brand p { color: rgba(255,255,255,0.65); font-size:0.92rem; margin-bottom:6px; }
+/* Form */
+.inner { display:flex; flex-direction:column; gap:12px; margin-top:8px; }
+.input-row { display:flex; gap:8px; width:100%; flex-wrap:wrap; justify-content:center; }
+.input {
+  flex:1;
+  min-width:0;
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:0.95rem;
+  border:none;
+  outline:none;
+  color:#001;
+  background: linear-gradient(90deg, rgba(255,255,255,0.94), rgba(240,240,240,0.95));
+  box-shadow: inset 2px 2px 8px rgba(0,0,0,0.12), inset -2px -2px 6px rgba(255,255,255,0.7);
+  transition: box-shadow .18s ease, transform .18s ease;
+}
+.input:focus { box-shadow: 0 0 20px rgba(212,175,55,0.15), inset 2px 2px 6px rgba(0,0,0,0.12); }
 
-    /* Form */
-    .inner { display:flex; flex-direction:column; gap:14px; margin-top:12px; }
-    .input-row { display:flex; gap:10px; width:100%; flex-wrap:wrap; justify-content:center; }
-    .input {
-      flex:1;
-      min-width:0;
-      border-radius:12px;
-      padding:12px 14px;
-      font-size:1rem;
-      border:none;
-      outline:none;
-      color:#001;
-      background: linear-gradient(90deg, rgba(255,255,255,0.94), rgba(240,240,240,0.95));
-      box-shadow: inset 2px 2px 8px rgba(0,0,0,0.12), inset -2px -2px 6px rgba(255,255,255,0.7);
-      transition: box-shadow .18s ease, transform .18s ease;
-    }
-    .input:focus { box-shadow: 0 0 24px rgba(0,160,255,0.12), inset 2px 2px 6px rgba(0,0,0,0.12); }
+/* Buttons */
+.submit {
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  min-width:100px; padding:10px 12px;
+  border-radius:12px; background: linear-gradient(135deg, rgba(212,175,55,0.95), rgba(255,255,255,0.92));
+  color:#000; font-weight:700; border:none; cursor:pointer;
+  box-shadow: 0 6px 16px rgba(212,175,55,0.22), 0 2px 6px rgba(0,0,0,0.35);
+  transition: transform .16s, box-shadow .16s;
+}
+.submit:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(212,175,55,0.28); }
+.submit:active { transform: translateY(1px); }
 
-    .submit {
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      min-width:110px; padding:12px 14px;
-      border-radius:12px; background: linear-gradient(135deg, rgba(212,175,55,0.95), rgba(255,255,255,0.92));
-      color:#000; font-weight:700; border:none; cursor:pointer;
-      box-shadow: 0 8px 20px rgba(212,175,55,0.22), 0 2px 6px rgba(0,0,0,0.35);
-      transition: transform .16s, box-shadow .16s;
-    }
-    .submit:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(212,175,55,0.28); }
-    .submit:active { transform: translateY(1px); }
+.copy-btn {
+  padding:6px 8px;
+  font-size:0.78rem;
+  border-radius:10px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(212,175,55,0.95));
+  border:none;
+  cursor:pointer;
+  color:#000;
+  box-shadow:0 4px 12px rgba(212,175,55,0.25);
+  transition:0.2s;
+}
+.copy-btn:hover { transform: translateY(-1px); box-shadow:0 6px 16px rgba(212,175,55,0.32); }
 
-    /* Code Display */
-    #pair { width:100%; display:flex; align-items:center; justify-content:center; margin-top:12px; min-height:68px; }
-    .code-display {
-      position:relative;
-      background: linear-gradient(180deg, rgba(8,12,18,0.9), rgba(20,24,30,0.92));
-      padding:14px 18px; border-radius:12px;
-      border:1px solid rgba(255,255,255,0.04);
-      box-shadow: 0 10px 30px rgba(0,6,20,0.6), 0 0 16px rgba(0,120,255,0.06);
-      cursor:pointer; display:inline-flex; gap:12px; align-items:center; min-width:220px; max-width:100%;
-    }
-    .code-text { font-size:1rem; color: rgba(255,255,255,0.9); font-weight:700; }
-    .code-value { font-family: monospace; color:var(--gold); font-weight:900; text-shadow: 0 0 12px rgba(212,175,55,0.12); letter-spacing:1px; }
+/* Code Display */
+#pair { width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top:10px; min-height:50px; }
+.code-display {
+  position:relative;
+  background: linear-gradient(180deg, rgba(8,12,18,0.9), rgba(20,24,30,0.92));
+  padding:10px 14px; border-radius:12px;
+  border:1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 8px 25px rgba(0,6,20,0.6), 0 0 12px rgba(0,120,255,0.06);
+  display:flex; align-items:center; justify-content:space-between; width:100%;
+}
+.code-value { font-family: monospace; color:var(--gold); font-weight:900; text-shadow: 0 0 10px rgba(212,175,55,0.15); letter-spacing:1px; }
 
-    /* Footer */
-    .foot { margin-top:14px; text-align:center; color: rgba(255,255,255,0.45); font-size:0.82rem; }
+.foot { margin-top:12px; text-align:center; color: rgba(255,255,255,0.45); font-size:0.78rem; }
 
-    @media (max-width:520px){
-      .card{ padding:18px; border-radius:16px; }
-      .brand h1{ font-size:22px; }
-    }
-  </style>
+@media (max-width:520px){
+  .card{ padding:16px; border-radius:16px; }
+  .brand h1{ font-size:20px; }
+  .submit { min-width:80px; padding:8px 10px; }
+  .copy-btn { padding:5px 6px; font-size:0.7rem; }
+}
+</style>
 </head>
 <body>
 
-  <!-- Animated Waves -->
-  <div class="background-wave"></div>
-  <div class="background-wave"></div>
-  <div class="background-wave"></div>
+<!-- Animated Waves -->
+<div class="background-wave"></div>
+<div class="background-wave"></div>
+<div class="background-wave"></div>
 
-  <div class="wrap" role="main">
-    <div class="card" aria-labelledby="brand-title">
-      <div class="brand" id="brand-title">
-        <h1>X-GURU</h1>
-        <p>Pair your WhatsApp bot safely</p>
+<div class="wrap">
+  <div class="card">
+    <div class="brand">
+      <h1>X-GURU</h1>
+      <p>Pair your WhatsApp bot safely</p>
+    </div>
+
+    <div class="inner">
+      <div class="input-row">
+        <input id="number" class="input" inputmode="numeric" pattern="[0-9]*" placeholder="Enter phone number" />
+        <button id="submit" class="submit"><i class="fa fa-link"></i> Get Code</button>
       </div>
 
-      <div class="inner">
-        <div style="text-align:center; max-width:380px; margin:auto;">
-          <p>Enter your phone number with country code (e.g. <strong>254792021944</strong>) then tap <strong>Submit</strong>.</p>
-        </div>
+      <div id="pair" aria-live="polite"></div>
 
-        <div class="input-row">
-          <input id="number" class="input" inputmode="numeric" pattern="[0-9]*" placeholder="254792021944" />
-          <button id="submit" class="submit"><i class="fa fa-link"></i> Submit</button>
-        </div>
-
-        <div id="pair" aria-live="polite"></div>
-
-        <div class="foot">© 2025 X-GURU — Secure connection</div>
-      </div>
+      <div class="foot">© 2025 X-GURU — Secure connection</div>
     </div>
   </div>
+</div>
 
-  <script>
-    const pairEl = document.getElementById('pair');
-    const submitBtn = document.getElementById('submit');
-    const numInput = document.getElementById('number');
+<script>
+const pairEl = document.getElementById('pair');
+const submitBtn = document.getElementById('submit');
+const numInput = document.getElementById('number');
 
-    function showMessage(html, isError=false){
-      pairEl.innerHTML = '<div class="code-display"><div style="display:flex;flex-direction:column; gap:6px; align-items:center">' +
-                          '<div class="msg '+(isError? 'err':'')+'">' + html + '</div></div></div>';
-    }
+function showCode(code){
+  pairEl.innerHTML = '';
+  const container = document.createElement('div');
+  container.className = 'code-display';
+  container.innerHTML = '<span class="code-value">'+code+'</span>';
 
-    function renderCode(code){
-      const container = document.createElement('div');
-      container.className='code-display';
-      container.style.position='relative';
+  // Copy button
+  const copyBtn = document.createElement('button');
+  copyBtn.className='copy-btn';
+  copyBtn.innerHTML='<i class="fa fa-copy"></i>';
+  copyBtn.onclick = () => {
+    navigator.clipboard.writeText(code);
+    copyBtn.innerHTML='<i class="fa fa-check"></i>';
+    setTimeout(()=> copyBtn.innerHTML='<i class="fa fa-copy"></i>',1200);
+  };
 
-      const left = document.createElement('div');
-      left.style.display='flex';
-      left.style.flexDirection='column';
-      left.style.gap='4px';
-      left.innerHTML='<div class="code-text">CODE</div><div class="code-value">'+code+'</div>';
-      container.appendChild(left);
+  container.appendChild(copyBtn);
+  pairEl.appendChild(container);
+}
 
-      return container;
-    }
+submitBtn.addEventListener('click', async ()=>{
+  const raw = (numInput.value||'').trim();
+  const digits = raw.replace(/\D/g,'');
+  if(!digits){ alert('Enter your WhatsApp number'); return; }
+  if(digits.length<8){ alert('Number too short'); return; }
 
-    submitBtn.addEventListener('click', async (ev)=>{
-      ev.preventDefault();
-      const raw = (numInput.value || '').trim();
-      const digits = raw.replace(/\D/g,'');
-      if(!digits){ showMessage('Enter your WhatsApp number', true); return; }
-      if(digits.length<8){ showMessage('Invalid number — too short', true); return; }
+  submitBtn.disabled=true;
+  submitBtn.innerText='Processing…';
+  
+  try{
+    const resp = await fetch(`/code?number=${encodeURIComponent(digits)}`);
+    if(!resp.ok) throw new Error('Network error');
+    const data = await resp.json? await resp.json() : await resp.text();
+    let code = typeof data==='object'? data.code??data.data??'' : (data||'');
+    showCode(code || 'Error: No code returned');
+  }catch(e){
+    showCode('Error: Service unavailable');
+  }finally{
+    submitBtn.disabled=false;
+    submitBtn.innerHTML='<i class="fa fa-link"></i> Get Code';
+  }
+});
 
-      numInput.disabled=true; submitBtn.disabled=true;
-      showMessage('Processing…');
-
-      try{
-        const resp = await fetch(`/code?number=${encodeURIComponent(digits)}`,{ method:'GET' });
-        if(!resp.ok) throw new Error('Network response not ok');
-        const data = await resp.json? await resp.json() : await resp.text();
-        let code = '';
-        if(typeof data==='object' && data!==null) code=data.code??data.data??'';
-        else if(typeof data==='string'){ try{ const j=JSON.parse(data); code=j.code??''; } catch(e){ code=data; } }
-        if(!code) showMessage('Error: Service returned no code', true);
-        else { pairEl.innerHTML=''; pairEl.appendChild(renderCode(code)); }
-      }catch(err){ console.error(err); showMessage('Error: Service Unavailable', true); }
-      finally{ numInput.disabled=false; submitBtn.disabled=false; }
-    });
-
-    numInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ submitBtn.click(); } });
-  </script>
+numInput.addEventListener('keydown', e=>{ if(e.key==='Enter') submitBtn.click(); });
+</script>
 </body>
 </html>
