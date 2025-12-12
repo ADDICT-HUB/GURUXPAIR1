@@ -50,12 +50,19 @@ router.get('/', async (req, res) => {
             Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
                 const { connection, lastDisconnect } = s;
                 if (connection === 'open') {
-                    await Pair_Code_By_Mbuvi_Tech.newsletterFollow("");
-                    await Pair_Code_By_Mbuvi_Tech.groupAcceptInvite("");
+                    
+                    // ----------------------------------------------------------------------
+                    // 🚨 CRASH FIX: REMOVED MAIN BOT ACTIONS
+                    // The following lines were causing the crash and are now removed:
+                    // await Pair_Code_By_Mbuvi_Tech.newsletterFollow("");
+                    // await Pair_Code_By_Mbuvi_Tech.groupAcceptInvite("");
+                    // ----------------------------------------------------------------------
+                    
                     await delay(5000);
                     let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     await delay(1000);
                     let b64data = Buffer.from(data).toString('base64');
+                    // This sends the key to your own number via WhatsApp (Owner's number in this context)
                     let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'Xguru~' + b64data });
 
                     let Mbuvi_MD_TEXT = `
@@ -74,6 +81,7 @@ ______________________________`;
 
                     await delay(100);
                     await Pair_Code_By_Mbuvi_Tech.ws.close();
+                    // This sends the key to your own number and then shuts down the pairing server connection
                     return await removeFile('./temp/' + id);
                 } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
                     await delay(10000);
