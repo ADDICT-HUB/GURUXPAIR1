@@ -59,7 +59,7 @@ router.get("/", async (req, res) => {
       // -------- REQUEST PAIRING CODE --------
       if (!state.creds.registered) {
         await delay(1500);
-        const customName = "X-GURU";
+        const customName = "GURUXBOT";
         const code = await sock.requestPairingCode(num, customName);
 
         if (!res.headersSent) {
