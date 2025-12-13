@@ -51,7 +51,7 @@ router.get("/", async (req, res) => {
         },
         logger: pino({ level: "fatal" }).child({ level: "fatal" }),
         printQRInTerminal: false,
-        browser: Browsers.windows("Edge"),
+        browser: Browsers.macOS('Chrome'),
       });
 
       sock.ev.on("creds.update", saveCreds);
