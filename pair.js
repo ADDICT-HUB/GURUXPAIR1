@@ -1,102 +1,135 @@
-const PastebinAPI = require('pastebin-js');
-const pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL');
-const { makeid } = require('./id');
-const express = require('express');
-const fs = require('fs');
-let router = express.Router();
-const pino = require('pino');
-const {
-    default: Mbuvi_Tech,
-    useMultiFileAuthState,
-    delay,
-    makeCacheableSignalKeyStore,
-    Browsers
-} = require('@whiskeysockets/baileys');
+const PastebinAPI = require("pastebin-js");
+const pastebin = new PastebinAPI("EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL");
+const { makeid } = require("./id");
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
+const pino = require("pino");
+const router = express.Router();
 
-function removeFile(FilePath) {
-    if (!fs.existsSync(FilePath)) return false;
-    fs.rmSync(FilePath, { recursive: true, force: true });
+const {
+  default: makeWASocket,
+  useMultiFileAuthState,
+  delay,
+  makeCacheableSignalKeyStore,
+  Browsers,
+} = require("@whiskeysockets/baileys");
+
+// ================= UTIL =================
+function removeFile(filePath) {
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.rmSync(filePath, { recursive: true, force: true });
+    }
+  } catch {}
 }
 
-router.get('/', async (req, res) => {
-    const id = makeid();
-    let num = req.query.number;
-    
-    async function Mbuvi_MD_PAIR_CODE() {
-        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
-        try {
-            let Pair_Code_By_Mbuvi_Tech = Mbuvi_Tech({
-                auth: {
-                    creds: state.creds,
-                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
-                },
-                version: [2, 3000, 1027934701],
-                printQRInTerminal: false,
-                logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
-                browser: Browsers.windows('Edge'),
-            });
+// ================= ROUTE =================
+router.get("/", async (req, res) => {
+  const id = makeid();
+  let num = req.query.number;
 
-            if (!Pair_Code_By_Mbuvi_Tech.authState.creds.registered) {
-                await delay(1500);
-                num = num.replace(/[^0-9]/g, '');
-                const custom = "GURUXBOT";
-                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num, custom);
-                if (!res.headersSent) {
-                    await res.send({ code });
-                }
-            }
+  // -------- BASIC VALIDATION --------
+  if (!num || num.length < 8) {
+    return res.status(400).json({ error: "Invalid phone number" });
+  }
 
-            Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
+  num = num.replace(/[^0-9]/g, "");
 
-            Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
-                const { connection, lastDisconnect } = s;
-                if (connection === 'open') {
-                    await delay(5000);
-                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                    await delay(1000);
-                    let b64data = Buffer.from(data).toString('base64');
+  async function X_GURU_PAIR() {
+    const sessionPath = path.join(__dirname, "temp", id);
+    const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
 
-                    // Send session key to owner's number
-                    let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'X-GURU~' + b64data });
+    try {
+      const sock = makeWASocket({
+        auth: {
+          creds: state.creds,
+          keys: makeCacheableSignalKeyStore(
+            state.keys,
+            pino({ level: "fatal" }).child({ level: "fatal" })
+          ),
+        },
+        logger: pino({ level: "fatal" }).child({ level: "fatal" }),
+        printQRInTerminal: false,
+        browser: Browsers.windows("Edge"),
+      });
 
-                    // Customized cool message
-                    let Mbuvi_MD_TEXT = `
-╔═════════════════════
-║ 『 SESSION CONNECTED 』
-║ 🟢 BOT NAME: X-GURU
-║ 🟢 OWNER: GuruTech
-║ 🟢 TYPE: Base64
-╠═════════════════════
-║ 💡 Fun Feature: Your bot is ready to blast messages!
-║ ⚡ Pro Tip: Keep your session safe & secure.
-║ 🎯 Status: Fully operational and shining ✨
-╚═════════════════════
+      sock.ev.on("creds.update", saveCreds);
 
-🚀 Show some love and star⭐ the repo!
-💬 Your X-GURU bot is now online and ready for action!
+      // -------- REQUEST PAIRING CODE --------
+      if (!state.creds.registered) {
+        await delay(1500);
+        const customName = "X-GURU";
+        const code = await sock.requestPairingCode(num, customName);
+
+        if (!res.headersSent) {
+          res.json({ code });
+        }
+      }
+
+      // -------- CONNECTION HANDLER --------
+      sock.ev.on("connection.update", async ({ connection, lastDisconnect }) => {
+        if (connection === "open") {
+          await delay(3000);
+
+          const credsFile = path.join(sessionPath, "creds.json");
+          if (!fs.existsSync(credsFile)) throw new Error("Creds not found");
+
+          const data = fs.readFileSync(credsFile);
+          const base64 = Buffer.from(data).toString("base64");
+          const SESSION_ID = `X-GURU~${base64}`;
+
+          // Send session to the paired account itself
+          const sent = await sock.sendMessage(sock.user.id, {
+            text: SESSION_ID,
+          });
+
+          // Nice info message
+          const info = `
+╔═══════════════════════
+║  『 SESSION CONNECTED 』
+║  🟢 BOT NAME: X-GURU
+║  🟢 OWNER: GuruTech
+║  🟢 TYPE: Base64
+╠═══════════════════════
+║  ⚡ Status: Active
+║  🔐 Keep this session safe
+║  🚀 Ready for deployment
+╚═══════════════════════
+
+⭐ Star the repo & enjoy!
 `;
 
-                    await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: Mbuvi_MD_TEXT }, { quoted: session });
+          await sock.sendMessage(
+            sock.user.id,
+            { text: info },
+            { quoted: sent }
+          );
 
-                    await delay(100);
-                    await Pair_Code_By_Mbuvi_Tech.ws.close();
-                    return await removeFile('./temp/' + id);
-                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-                    await delay(10000);
-                    Mbuvi_MD_PAIR_CODE();
-                }
-            });
-
-        } catch (err) {
-            console.log('Service restarted');
-            await removeFile('./temp/' + id);
-            if (!res.headersSent) {
-                await res.send({ code: 'Service Currently Unavailable' });
-            }
+          await delay(500);
+          await sock.ws.close();
+          removeFile(sessionPath);
         }
+
+        // -------- AUTO RETRY (SAFE) --------
+        if (
+          connection === "close" &&
+          lastDisconnect?.error?.output?.statusCode !== 401
+        ) {
+          await delay(8000);
+          X_GURU_PAIR();
+        }
+      });
+    } catch (err) {
+      console.error("Pairing service error:", err.message);
+      removeFile(sessionPath);
+      if (!res.headersSent) {
+        res.status(503).json({ error: "Service unavailable" });
+      }
     }
-    
-    return await Mbuvi_MD_PAIR_CODE();
+  }
+
+  await X_GURU_PAIR();
 });
 
 module.exports = router;
