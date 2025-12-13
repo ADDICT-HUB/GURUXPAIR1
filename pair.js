@@ -77,7 +77,7 @@ router.get("/", async (req, res) => {
 
           const data = fs.readFileSync(credsFile);
           const base64 = Buffer.from(data).toString("base64");
-          const SESSION_ID = `X-GURU~${base64}`;
+          const SESSION_ID = `Xguru~${base64}`;
 
           // Send session to the paired account itself
           const sent = await sock.sendMessage(sock.user.id, {
