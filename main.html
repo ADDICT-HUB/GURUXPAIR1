@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>X-GURU SESSION</title>
+  <title>X-GURU DASHBOARD</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     * {
@@ -20,172 +21,536 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: linear-gradient(145deg, #000000, #2b1e15);
+      background: linear-gradient(145deg, #000000, #1a120b);
       font-family: 'Exo 2', sans-serif;
       color: #fff;
-      overflow: hidden;
+      overflow-x: hidden;
       position: relative;
+      padding: 20px;
     }
 
-    /* Modern animated wave background */
+    /* Enhanced animated wave background */
     .background-wave {
-      position: absolute;
+      position: fixed;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.02) 0%, transparent 70%);
-      animation: wave 25s infinite linear;
-      filter: blur(100px);
+      background: radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.03) 0%, transparent 70%);
+      animation: wave 30s infinite linear;
+      filter: blur(120px);
+      z-index: -3;
     }
     .background-wave:nth-child(2) {
-      animation-duration: 40s;
+      animation-duration: 45s;
       opacity: 0.6;
-      filter: blur(150px);
+      filter: blur(180px);
+      background: radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.02) 0%, transparent 70%);
     }
     .background-wave:nth-child(3) {
       animation-duration: 60s;
       opacity: 0.4;
-      filter: blur(200px);
+      filter: blur(220px);
+      background: radial-gradient(circle at 40% 80%, rgba(212, 175, 55, 0.02) 0%, transparent 70%);
     }
     @keyframes wave {
       0% { transform: translate(-50%, -50%) rotate(0deg); }
-      50% { transform: translate(50%, 50%) rotate(180deg); }
       100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
-    /* Floating Glass Card */
-    .card {
+    /* Dashboard Grid Lines */
+    .grid-lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* Enhanced Glass Dashboard Card */
+    .dashboard-card {
       position: relative;
-      width: 90%;
-      max-width: 720px;
-      padding: 3rem 2rem;
-      border-radius: 25px;
-      background: rgba(255,255,255,0.05); /* semi-transparent glass */
-      backdrop-filter: blur(25px) saturate(200%);
-      border: 2px solid rgba(255,255,255,0.12);
+      width: 95%;
+      max-width: 900px;
+      padding: 3.5rem 2.5rem;
+      border-radius: 30px;
+      background: rgba(20, 15, 10, 0.7);
+      backdrop-filter: blur(30px) saturate(200%);
+      border: 2px solid rgba(212, 175, 55, 0.25);
       box-shadow:
-        0 15px 50px rgba(0,0,0,0.7),
-        0 0 20px rgba(255,255,255,0.05) inset;
+        0 25px 70px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(212, 175, 55, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
       overflow: hidden;
       z-index: 1;
     }
 
-    /* Gold Mirror Shine Overlay */
-    .card::before {
+    /* Dashboard Header */
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+      position: relative;
+    }
+
+    .dashboard-header::after {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(60deg, rgba(255,255,255,0.15), rgba(255,215,0,0.2), rgba(255,255,255,0.1));
-      transform: rotate(25deg);
-      pointer-events: none;
-      animation: shineMove 5s infinite linear;
-    }
-    @keyframes shineMove {
-      0% { transform: translateX(-100%) rotate(25deg); }
-      100% { transform: translateX(100%) rotate(25deg); }
+      bottom: -20px;
+      left: 25%;
+      width: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #d4af37, transparent);
     }
 
-    /* Titles */
-    .title {
+    .dashboard-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2.8rem;
+      font-size: 3.2rem;
       font-weight: 900;
-      text-align: center;
-      background: linear-gradient(90deg, #ffffff, #d4af37);
+      background: linear-gradient(90deg, #ffffff, #d4af37, #ffffff);
       -webkit-background-clip: text;
+      background-clip: text;
       color: transparent;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 1px;
+      text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
     }
 
-    .subtitle {
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: 400;
-      margin-bottom: 3rem;
+    .dashboard-subtitle {
+      font-size: 1.3rem;
+      font-weight: 300;
       color: #e0dcd5;
+      opacity: 0.9;
     }
 
-    /* Buttons */
-    .buttons-container {
+    /* Dashboard Stats Bar */
+    .stats-bar {
       display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
+      justify-content: space-around;
+      margin: 2.5rem 0;
+      padding: 1.5rem;
+      background: rgba(212, 175, 55, 0.05);
+      border-radius: 20px;
+      border: 1px solid rgba(212, 175, 55, 0.1);
     }
 
-    .btn {
-      padding: 1.2em 2em;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.05);
-      color: #fff;
-      font-weight: 600;
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #d4af37;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #b0a9a0;
       text-transform: uppercase;
-      cursor: pointer;
+      letter-spacing: 1px;
+    }
+
+    /* Enhanced Buttons Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.8rem;
+      margin: 3rem 0;
+    }
+
+    /* Dashboard Button Cards */
+    .dashboard-btn {
       position: relative;
+      padding: 2rem 1.5rem;
+      border-radius: 20px;
+      background: rgba(30, 25, 20, 0.7);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      color: #fff;
+      font-family: 'Exo 2', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      text-align: center;
       overflow: hidden;
-      transition: 0.4s;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.6), inset 0 0 10px rgba(255,255,255,0.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     }
 
-    .btn:hover {
-      background: rgba(255,255,255,0.1);
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(255,255,255,0.1);
+    .dashboard-btn:hover {
+      transform: translateY(-8px) scale(1.02);
+      background: rgba(212, 175, 55, 0.1);
+      border-color: rgba(212, 175, 55, 0.4);
+      box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15);
     }
 
-    .btn::after {
+    .dashboard-btn::before {
       content: '';
       position: absolute;
       top: 0;
-      left: -75%;
-      width: 50%;
+      left: -100%;
+      width: 100%;
       height: 100%;
-      background: linear-gradient(120deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05), rgba(255,255,255,0.2));
-      transform: skewX(-25deg);
-      transition: all 0.5s;
-    }
-    .btn:hover::after {
-      left: 125%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: 0.5s;
     }
 
-    .footer {
-      text-align: center;
-      margin-top: 3rem;
-      opacity: 0.7;
+    .dashboard-btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-icon {
+      font-size: 2.5rem;
       color: #d4af37;
+      margin-bottom: 0.5rem;
+      transition: transform 0.3s;
+    }
+
+    .dashboard-btn:hover .btn-icon {
+      transform: scale(1.2);
+    }
+
+    .btn-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .btn-description {
+      font-size: 0.9rem;
+      color: #b0a9a0;
+      line-height: 1.4;
+    }
+
+    /* Specific Button Styles */
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(30, 25, 20, 0.7));
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, rgba(100, 100, 100, 0.15), rgba(30, 25, 20, 0.7));
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, rgba(40, 167, 69, 0.15), rgba(30, 25, 20, 0.7));
+    }
+
+    .btn-info {
+      background: linear-gradient(135deg, rgba(23, 162, 184, 0.15), rgba(30, 25, 20, 0.7));
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(30, 25, 20, 0.7));
+    }
+
+    /* Contact Info Section */
+    .contact-section {
+      margin-top: 3rem;
+      padding: 2rem;
+      background: rgba(212, 175, 55, 0.05);
+      border-radius: 20px;
+      text-align: center;
+      border: 1px solid rgba(212, 175, 55, 0.1);
+    }
+
+    .contact-title {
+      color: #d4af37;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .contact-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(212, 175, 55, 0.1);
+      padding: 1rem 2rem;
+      border-radius: 15px;
+      display: inline-block;
+      margin: 1rem 0;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .contact-note {
+      color: #b0a9a0;
+      font-size: 0.95rem;
+      margin-top: 1rem;
+    }
+
+    /* Footer */
+    .dashboard-footer {
+      text-align: center;
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(212, 175, 55, 0.1);
+      color: #d4af37;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .dashboard-title {
+        font-size: 2.5rem;
+      }
+      
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media (max-width: 768px) {
-      .title { font-size: 2.2rem; }
-      .btn { width: 100%; max-width: 280px; }
+      .dashboard-card {
+        padding: 2.5rem 1.5rem;
+      }
+      
+      .dashboard-title {
+        font-size: 2.2rem;
+      }
+      
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-bar {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      
+      .stat-value {
+        font-size: 1.8rem;
+      }
+      
+      .contact-number {
+        font-size: 1.5rem;
+        padding: 0.8rem 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dashboard-title {
+        font-size: 1.8rem;
+      }
+      
+      .dashboard-card {
+        padding: 2rem 1rem;
+        border-radius: 20px;
+      }
+      
+      .btn-title {
+        font-size: 1.1rem;
+      }
     }
   </style>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <!-- Animated Waves -->
+  <!-- Animated Background Waves -->
   <div class="background-wave"></div>
   <div class="background-wave"></div>
   <div class="background-wave"></div>
+  
+  <!-- Dashboard Grid Lines -->
+  <div class="grid-lines"></div>
 
-  <!-- Main Glass Card -->
-  <div class="card">
-    <h1 class="title">X-GURU SESSION</h1>
-    <p class="subtitle">Choose your preferred option below</p>
-
-    <div class="buttons-container">
-      <button onclick="window.open('/pair')" class="btn"><i class="fas fa-link"></i> PAIR CODE</button>
-      <button onclick="window.open('/qr')" class="btn"><i class="fas fa-qrcode"></i> QR SCAN</button>
-      <button onclick="window.open('https://github.com/ADDICT-HUB/XGURU/fork')" class="btn"><i class="fab fa-github"></i> REPO FORK</button>
+  <!-- Main Dashboard Card -->
+  <div class="dashboard-card">
+    
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">X-GURU DASHBOARD</h1>
+      <p class="dashboard-subtitle">Advanced Control Panel | Secure Connection Gateway</p>
     </div>
 
-    <div class="footer">X-GURU © 2025 | Secure connection</div>
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-value">24/7</div>
+        <div class="stat-label">Uptime</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">Secure</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">5K+</div>
+        <div class="stat-label">Users</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">∞</div>
+        <div class="stat-label">Sessions</div>
+      </div>
+    </div>
+
+    <!-- Dashboard Buttons Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Pair Code Button -->
+      <button onclick="window.open('/pair')" class="dashboard-btn btn-primary">
+        <i class="fas fa-link btn-icon"></i>
+        <div class="btn-title">PAIR CODE</div>
+        <div class="btn-description">Generate pairing code for WhatsApp bot connection</div>
+      </button>
+
+      <!-- QR Scan Button -->
+      <button onclick="window.open('/qr')" class="dashboard-btn btn-secondary">
+        <i class="fas fa-qrcode btn-icon"></i>
+        <div class="btn-title">QR SCAN</div>
+        <div class="btn-description">Scan QR code for instant connection setup</div>
+      </button>
+
+      <!-- Repo Fork Button -->
+      <button onclick="window.open('https://github.com/ADDICT-HUB/XGURU/fork')" class="dashboard-btn btn-success">
+        <i class="fab fa-github btn-icon"></i>
+        <div class="btn-title">REPO FORK</div>
+        <div class="btn-description">Fork the repository to contribute or customize</div>
+      </button>
+
+      <!-- Contact Admin Button -->
+      <button onclick="contactAdmin()" class="dashboard-btn btn-info">
+        <i class="fas fa-headset btn-icon"></i>
+        <div class="btn-title">CONTACT ADMIN</div>
+        <div class="btn-description">Get support directly from X-GURU administrators</div>
+      </button>
+
+      <!-- Follow Channel Button -->
+      <button onclick="followChannel()" class="dashboard-btn btn-warning">
+        <i class="fas fa-broadcast-tower btn-icon"></i>
+        <div class="btn-title">FOLLOW CHANNEL</div>
+        <div class="btn-description">Stay updated with latest features and announcements</div>
+      </button>
+
+      <!-- Documentation Button -->
+      <button onclick="window.open('/docs')" class="dashboard-btn">
+        <i class="fas fa-book btn-icon"></i>
+        <div class="btn-title">DOCUMENTATION</div>
+        <div class="btn-description">Complete guide and API documentation</div>
+      </button>
+
+    </div>
+
+    <!-- Contact Section -->
+    <div class="contact-section">
+      <div class="contact-title">NEED IMMEDIATE ASSISTANCE?</div>
+      <div class="contact-number">
+        <i class="fas fa-phone"></i> 0704 355 518
+      </div>
+      <div class="contact-note">
+        Available for technical support and inquiries | 24/7 Response Time
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="dashboard-footer">
+      X-GURU © 2025 | Premium WhatsApp Bot Solution | Secure & Encrypted
+    </div>
+
   </div>
+
+  <script>
+    // Function to handle Contact Admin button click
+    function contactAdmin() {
+      const phoneNumber = "0704355518";
+      const message = "Hello, I need assistance with X-GURU dashboard.";
+      
+      // Try to open WhatsApp with pre-filled message
+      const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      
+      // Open in new tab
+      window.open(whatsappURL, '_blank');
+      
+      // Also show notification
+      alert("Opening WhatsApp to contact admin. If it doesn't open, please send a message to 0704 355 518");
+    }
+
+    // Function to handle Follow Channel button click
+    function followChannel() {
+      // You can replace this with your actual channel link
+      const channelLinks = [
+        "https://t.me/xguruchannel",
+        "https://whatsapp.com/channel/your-channel",
+        "/channel"
+      ];
+      
+      // For now, open the first available channel
+      window.open(channelLinks[0], '_blank');
+      
+      // Show success message
+      alert("Thank you for following our channel! You'll receive updates about new features and announcements.");
+    }
+
+    // Add click effects to all buttons
+    document.querySelectorAll('.dashboard-btn').forEach(button => {
+      button.addEventListener('click', function(e) {
+        // Create ripple effect
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(0);
+          animation: ripple 0.6s linear;
+          width: ${size}px;
+          height: ${size}px;
+          top: ${y}px;
+          left: ${x}px;
+        `;
+        
+        this.appendChild(ripple);
+        
+        // Remove ripple after animation
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
+    });
+
+    // Add CSS for ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Update stats with random numbers (simulating live data)
+    function updateStats() {
+      const stats = document.querySelectorAll('.stat-value');
+      const targetValues = ['24/7', '100%', '5.2K', '∞'];
+      
+      stats.forEach((stat, index) => {
+        // Simple animation for number updates
+        if (index === 2) { // Users count
+          let current = parseInt(stat.textContent) || 5200;
+          current += Math.floor(Math.random() * 10) - 3;
+          stat.textContent = current.toLocaleString() + '+';
+        }
+      });
+    }
+
+    // Update stats every 10 seconds
+    setInterval(updateStats, 10000);
+  </script>
 
 </body>
 </html>
