@@ -3,482 +3,438 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pair Code — X-GURU</title>
-
-<!-- Fonts & Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>X GURU | Pair Code</title>
 
 <style>
-:root {
-  --bg-dark: #0f0f23;
-  --bg-blue: #0a1128;
-  --accent-blue: #2563eb;
-  --accent-light-blue: #3b82f6;
-  --card-bg: rgba(16, 22, 36, 0.95);
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --border-color: rgba(59, 130, 246, 0.2);
-  --success-green: #10b981;
-  --btn-gradient: linear-gradient(135deg, #2563eb, #3b82f6);
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Reset & Body */
-* { box-sizing:border-box; margin:0; padding:0; }
-html, body { height:100%; font-family:'Inter', sans-serif; }
 body {
-  display:flex; justify-content:center; align-items:center;
-  background: linear-gradient(135deg, var(--bg-dark), var(--bg-blue));
-  overflow-x:hidden;
-  position:relative;
-  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  background: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   padding: 20px;
 }
 
-/* Background elements */
-.bg-grid {
-  position: absolute;
+.container {
   width: 100%;
-  height: 100%;
-  background-image: 
-    linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
-  opacity: 0.3;
+  max-width: 400px;
 }
 
-.bg-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  z-index: -1;
-}
-
-/* Main Card */
 .card {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  padding: 30px;
-  border-radius: 20px;
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 
-              0 0 0 1px rgba(59, 130, 246, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  z-index: 1;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
-  z-index: 2;
+  border: 1px solid #e1e4e8;
 }
 
 /* Header */
 .header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px 20px;
   text-align: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(59, 130, 246, 0.1);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.logo-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: var(--btn-gradient);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: white;
-}
-
-.logo-text {
-  font-size: 28px;
-  font-weight: 700;
-  background: linear-gradient(90deg, #f8fafc, #cbd5e1);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.subtitle {
-  font-size: 16px;
-  color: var(--text-secondary);
-  margin-bottom: 5px;
-}
-
-.system-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--success-green);
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: 5px;
-}
-
-.system-status::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  background-color: var(--success-green);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
-}
-
-/* Form */
-.form-group {
-  margin-bottom: 25px;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 15px;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.example-text {
-  font-size: 13px;
-  color: rgba(203, 213, 225, 0.6);
-  margin-top: 5px;
-}
-
-.input-wrapper {
   position: relative;
+}
+
+.header h1 {
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.header p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #764ba2;
+}
+
+/* Content */
+.content {
+  padding: 32px 24px 24px;
+}
+
+.instruction {
+  text-align: center;
+  margin-bottom: 24px;
+  line-height: 1.5;
+  color: #333;
+  font-size: 15px;
+}
+
+/* Input Section */
+.input-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid #e9ecef;
+}
+
+.phone-input {
   display: flex;
   align-items: center;
+  background: white;
+  border: 1px solid #d1d5da;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-size: 16px;
 }
 
 .country-code {
-  position: absolute;
-  left: 15px;
-  color: var(--text-secondary);
+  color: #555;
   font-weight: 500;
-  z-index: 2;
+  margin-right: 8px;
+  user-select: none;
 }
 
-.input-field {
+.phone-number {
+  color: #333;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.get-code-btn {
   width: 100%;
-  padding: 16px 16px 16px 70px;
-  border-radius: 12px;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  background: rgba(15, 23, 42, 0.7);
-  color: var(--text-primary);
-  font-size: 16px;
-  font-family: 'Roboto Mono', monospace;
-  transition: all 0.3s;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-/* Buttons */
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  padding: 16px;
-  border-radius: 12px;
-  border: none;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-top: 10px;
-}
-
-.btn-primary {
-  background: var(--btn-gradient);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+.get-code-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.btn-primary:active {
+.get-code-btn:active {
   transform: translateY(0);
-}
-
-.btn-secondary {
-  background: rgba(30, 41, 59, 0.7);
-  color: var(--text-secondary);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-.btn-secondary:hover {
-  background: rgba(30, 41, 59, 0.9);
-  border-color: rgba(59, 130, 246, 0.4);
 }
 
 /* Code Display */
 .code-section {
-  margin-top: 30px;
-  padding-top: 25px;
-  border-top: 1px solid rgba(59, 130, 246, 0.1);
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid #e9ecef;
+  margin-bottom: 20px;
 }
 
-.section-title {
-  text-align: center;
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: var(--text-primary);
+.code-title {
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
 }
 
 .code-display {
-  background: rgba(15, 23, 42, 0.7);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  margin-bottom: 20px;
-  text-align: center;
+  background: white;
+  border: 1px solid #d1d5da;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
 }
 
 .code-value {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 32px;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 24px;
   font-weight: 700;
-  letter-spacing: 3px;
-  color: white;
-  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-  margin-bottom: 15px;
+  letter-spacing: 2px;
+  color: #333;
 }
 
-.session-active {
+.session-status {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(37, 99, 235, 0.1);
-  color: var(--accent-blue);
-  padding: 8px 16px;
+  background: #e7f5e9;
+  color: #2e7d32;
+  padding: 6px 12px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
 }
 
-.button-group {
-  display: flex;
-  gap: 12px;
-  margin-top: 15px;
+.session-status::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #4caf50;
+  border-radius: 50%;
+  margin-right: 6px;
 }
 
-.btn-icon {
+/* Buttons */
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  flex: 1;
-  padding: 12px;
+  border: 1px solid #d1d5da;
+  background: white;
+  color: #555;
+}
+
+.btn:hover {
+  background: #f8f9fa;
+  transform: translateY(-1px);
+}
+
+.btn.copy {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.btn.copy:hover {
+  background: #f0f2ff;
+}
+
+.btn.back {
+  border-color: #d1d5da;
+  color: #555;
+}
+
+.btn.back:hover {
+  background: #f8f9fa;
 }
 
 /* Footer */
 .footer {
   text-align: center;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(59, 130, 246, 0.1);
-  font-size: 13px;
-  color: rgba(203, 213, 225, 0.5);
+  color: #888;
+  font-size: 12px;
+  padding: 16px;
+  border-top: 1px solid #f0f2f5;
+  background: #fafbfc;
 }
 
 /* Responsive */
-@media (max-width: 480px) {
-  .card {
-    padding: 20px;
-    border-radius: 16px;
+@media (max-width: 420px) {
+  .content {
+    padding: 24px 16px 16px;
   }
   
-  .logo-text {
-    font-size: 24px;
+  .buttons {
+    flex-direction: column;
   }
   
   .code-value {
-    font-size: 26px;
-    letter-spacing: 2px;
-  }
-  
-  .button-group {
-    flex-direction: column;
+    font-size: 20px;
+    letter-spacing: 1.5px;
   }
 }
 </style>
 </head>
 <body>
 
-<!-- Background elements -->
-<div class="bg-grid"></div>
-<div class="bg-glow"></div>
-
-<!-- Main Card -->
-<div class="card">
-  <div class="header">
-    <div class="logo">
-      <div class="logo-icon">
-        <i class="fas fa-robot"></i>
+<div class="container">
+  <div class="card">
+    <!-- Header -->
+    <div class="header">
+      <h1>X GURU | Pair Code</h1>
+      <p>'HI: X Code</p>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+      <p class="instruction">
+        The system is ready. Enter your number with country code (e.g., 254...) to get your code.
+      </p>
+      
+      <!-- Phone Input -->
+      <div class="input-section">
+        <div class="phone-input">
+          <span class="country-code">+254</span>
+          <span class="phone-number">762 02......</span>
+        </div>
+        <button class="get-code-btn" id="getCodeBtn">
+          Get Code
+        </button>
       </div>
-      <div class="logo-text">X-GURU</div>
-    </div>
-    <div class="subtitle">Pair Code</div>
-    <div class="system-status">The system is ready</div>
-  </div>
-
-  <div class="form-group">
-    <div class="form-label">Enter your number with country code</div>
-    <div class="example-text">Example: 254 XXX XXX XXX</div>
-    <div class="input-wrapper">
-      <span class="country-code">+254</span>
-      <input 
-        type="text" 
-        id="number" 
-        class="input-field" 
-        inputmode="numeric" 
-        placeholder="762 02......" 
-        value="762 02......"
-      />
-    </div>
-  </div>
-
-  <button id="submit" class="btn btn-primary">
-    <i class="fas fa-link"></i> Get Code
-  </button>
-
-  <div id="pair" class="code-section" aria-live="polite">
-    <div class="section-title">Your Pairing Code:</div>
-    <div class="code-display">
-      <div class="code-value">KZXFKAVO</div>
-      <div class="session-active">
-        <i class="fas fa-circle"></i> Pairing session is active now
+      
+      <!-- Code Display (Initially hidden) -->
+      <div class="code-section" id="codeSection" style="display: none;">
+        <div class="code-title">Your Pairing Code:</div>
+        <div class="code-display">
+          <div class="code-value" id="codeValue">KZXFKAVO</div>
+        </div>
+        <div class="session-status">
+          Pairing session is active now
+        </div>
+        
+        <div class="buttons">
+          <button class="btn copy" id="copyBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 4V16C8 17.1046 8.89543 18 10 18H18C19.1046 18 20 17.1046 20 16V7.24264C20 6.70404 19.7893 6.1883 19.4142 5.81321L16.6863 3.08529C16.3112 2.71021 15.7955 2.5 15.2569 2.5H10C8.89543 2.5 8 3.39543 8 4Z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M4 8V19C4 20.1046 4.89543 21 6 21H14C15.1046 21 16 20.1046 16 19V8C16 6.89543 15.1046 6 14 6H6C4.89543 6 4 6.89543 4 8Z" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            Copy Code
+          </button>
+          <button class="btn back" id="backBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 12H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Back
+          </button>
+        </div>
       </div>
     </div>
-    <div class="button-group">
-      <button id="copyBtn" class="btn btn-secondary btn-icon">
-        <i class="fas fa-copy"></i> Copy Code
-      </button>
-      <button id="backBtn" class="btn btn-secondary btn-icon">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
+    
+    <!-- Footer -->
+    <div class="footer">
+      © 2025 X-GURU — Secure connection
     </div>
-  </div>
-
-  <div class="footer">
-    © 2025 X-GURU — Secure WhatsApp Bot Connection
   </div>
 </div>
 
 <script>
-const pairEl = document.getElementById('pair');
-const submitBtn = document.getElementById('submit');
+// Get DOM elements
+const getCodeBtn = document.getElementById('getCodeBtn');
+const codeSection = document.getElementById('codeSection');
+const codeValue = document.getElementById('codeValue');
 const copyBtn = document.getElementById('copyBtn');
 const backBtn = document.getElementById('backBtn');
-const numInput = document.getElementById('number');
+const phoneNumber = document.querySelector('.phone-number');
 
-// Initialize with the code from the image
-const initialCode = 'KZXFKAVO';
+// Predefined code from the image
+const pairingCode = 'KZXFKAVO';
+
+// Show code when "Get Code" is clicked
+getCodeBtn.addEventListener('click', () => {
+  // Get the phone number (in real app, this would be user input)
+  const currentNumber = phoneNumber.textContent;
+  
+  // Basic validation
+  if (currentNumber.includes('......')) {
+    // In a real app, you'd show an input field
+    // For this demo, we'll just use the placeholder
+    alert('Please enter a valid phone number (replace "......" with your number)');
+    return;
+  }
+  
+  // Show code section with animation
+  codeSection.style.display = 'block';
+  
+  // Scroll to code section smoothly
+  codeSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  
+  // In a real app, you would make an API call here:
+  // fetch(`/api/get-code?phone=${encodeURIComponent(currentNumber)}`)
+  //   .then(response => response.json())
+  //   .then(data => {
+  //     codeValue.textContent = data.code;
+  //   });
+});
 
 // Copy code functionality
 copyBtn.addEventListener('click', () => {
-  navigator.clipboard.writeText(initialCode);
-  
-  // Visual feedback
-  const originalText = copyBtn.innerHTML;
-  copyBtn.innerHTML = '<i class="fas fa-check"></i> Code Copied';
-  copyBtn.style.background = 'linear-gradient(135deg, #10b981, #34d399)';
-  
-  setTimeout(() => {
-    copyBtn.innerHTML = originalText;
-    copyBtn.style.background = '';
-  }, 1500);
+  navigator.clipboard.writeText(pairingCode)
+    .then(() => {
+      // Show feedback
+      const originalText = copyBtn.innerHTML;
+      copyBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 6L9 17L4 12" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Copied!
+      `;
+      copyBtn.style.color = '#4caf50';
+      copyBtn.style.borderColor = '#4caf50';
+      
+      // Reset after 2 seconds
+      setTimeout(() => {
+        copyBtn.innerHTML = originalText;
+        copyBtn.style.color = '';
+        copyBtn.style.borderColor = '';
+      }, 2000);
+    })
+    .catch(err => {
+      console.error('Failed to copy: ', err);
+      alert('Failed to copy code. Please try again.');
+    });
 });
 
 // Back button functionality
 backBtn.addEventListener('click', () => {
-  numInput.value = '762 02......';
-  numInput.focus();
+  // Hide code section
+  codeSection.style.display = 'none';
+  
+  // Reset phone number placeholder
+  phoneNumber.textContent = '762 02......';
+  
+  // Focus back on the input (in a real app)
+  getCodeBtn.focus();
 });
 
-// Get code functionality
-submitBtn.addEventListener('click', async () => {
-  const raw = (numInput.value || '').trim();
-  const digits = raw.replace(/\D/g, '');
-  
-  if (!digits) { 
-    alert('Please enter your WhatsApp number');
-    return; 
-  }
-  
-  if (digits.length < 8) { 
-    alert('Number is too short. Please include the full phone number.'); 
-    return; 
-  }
-
-  // Save original button state
-  const originalText = submitBtn.innerHTML;
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-  
-  // Simulate API call with delay
-  setTimeout(() => {
-    // In a real implementation, this would be an API call
-    // For demo, we'll just show a success message
-    alert(`Code requested for +254${digits}. In a real implementation, this would connect to your backend.`);
+// Make phone number editable on click (for demo purposes)
+phoneNumber.addEventListener('click', () => {
+  const currentText = phoneNumber.textContent;
+  if (currentText === '762 02......') {
+    phoneNumber.textContent = '762 02';
+    phoneNumber.style.caretColor = '#667eea';
     
-    // Reset button
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = originalText;
-  }, 1500);
-});
-
-// Allow Enter key to submit
-numInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    submitBtn.click();
+    // In a real app, you'd replace this with an actual input field
+    // For this demo, we'll just add a cursor effect
+    phoneNumber.style.borderBottom = '2px solid #667eea';
+    phoneNumber.style.paddingBottom = '2px';
+    phoneNumber.style.display = 'inline-block';
+    phoneNumber.style.minWidth = '100px';
+    
+    // Focus effect
+    setTimeout(() => {
+      // Move cursor to end (simulated)
+      phoneNumber.focus();
+    }, 10);
   }
 });
 
-// Focus on the number part when clicking the input
-numInput.addEventListener('click', function() {
-  if (this.value === '762 02......') {
-    this.setSelectionRange(0, 0);
+// Allow Enter key to trigger Get Code
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && codeSection.style.display === 'none') {
+    getCodeBtn.click();
   }
 });
 </script>
