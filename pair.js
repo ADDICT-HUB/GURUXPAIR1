@@ -24,122 +24,8 @@ function removeFile(filePath) {
   } catch {}
 }
 
-// Function to create beautiful ASCII table
-function createSessionTable(sessionId) {
-  const tableWidth = 50;
-  const horizontalLine = '─'.repeat(tableWidth);
-  
-  return `
-╔${'═'.repeat(tableWidth)}╗
-║${' '.repeat(12)}🚀 X-GURU BOT SESSION${' '.repeat(12)}║
-╠${'═'.repeat(tableWidth)}╣
-║ 📦 *SESSION DETAILS*                         ║
-╟${horizontalLine}╢
-║ 🔐 Session ID:                               ║
-║                                              ║
-║ \`\`\`${sessionId}\`\`\` ║
-║                                              ║
-╟${horizontalLine}╢
-║ 📊 *SESSION INFO*                            ║
-╟${horizontalLine}╢
-║ • Status: ✅ ACTIVE                          ║
-║ • Type: Base64 Encoded                       ║
-║ • Expires: 24 hours                          ║
-║ • Bot: GURUXBOT                              ║
-╟${horizontalLine}╢
-║ ⚡ *QUICK ACTIONS*                            ║
-╟${horizontalLine}╢
-║ 1. Copy Session ID for deployment           ║
-║ 2. Follow channel for updates               ║
-║ 3. Contact admin for help                   ║
-╚${'═'.repeat(tableWidth)}╝
-`;
-}
-
-// Function to create interactive message
-function createInteractiveMessage(sessionId) {
-  const channelLink = "https://whatsapp.com/channel/0029VbBNUAFFXUuUmJdrkj1f";
-  const adminNumber = "254704355518"; // Your number in international format
-  const whatsappLink = `https://wa.me/${adminNumber}`;
-  
-  return {
-    text: createSessionTable(sessionId) + `
-
-━━━━━━━━━━━━━━━━━━━━━━━
-📋 *IMMEDIATE ACTIONS:*
-
-Use the buttons below for quick actions:
-
-1️⃣ *COPY* - Copy session ID to clipboard
-2️⃣ *CHANNEL* - Join updates channel
-3️⃣ *HELP* - Contact admin on WhatsApp
-
-━━━━━━━━━━━━━━━━━━━━━━━
-⚠️ *IMPORTANT:*
-• Keep session ID PRIVATE
-• Do NOT share with anyone
-• Use within 24 hours
-• Store in secure location
-
-📞 *Support:* ${adminNumber}
-⭐ *Channel:* ${channelLink}
-`,
-    buttons: [
-      {
-        buttonId: 'copy_session',
-        buttonText: { 
-          displayText: '📋 Copy Session ID' 
-        },
-        type: 1
-      },
-      {
-        buttonId: 'follow_channel',
-        buttonText: { 
-          displayText: '📢 Join Channel' 
-        },
-        type: 1
-      },
-      {
-        buttonId: 'contact_admin',
-        buttonText: { 
-          displayText: '👨‍💻 Contact Admin' 
-        },
-        type: 1
-      }
-    ],
-    footer: 'X-GURU © 2025 | Secure WhatsApp Bot Connection'
-  };
-}
-
-// Function to create deployment guide
-function createDeploymentGuide() {
-  return `
-━━━━━━━━━━━━━━━━━━━━━━━
-📖 *DEPLOYMENT GUIDE*
-
-┌─────────────────────┐
-│  STEP 1: COPY       │
-│  • Copy session ID  │
-│  • Save it locally  │
-└─────────────────────┘
-
-┌─────────────────────┐
-│  STEP 2: DEPLOY     │
-│  • Paste in config  │
-│  • Restart bot      │
-│  • Verify connection│
-└─────────────────────┘
-
-┌─────────────────────┐
-│  STEP 3: VERIFY     │
-│  • Check bot status │
-│  • Test commands    │
-│  • Monitor logs     │
-└─────────────────────┘
-
-✅ *Your bot will be ready in minutes!*
-`;
-}
+// Store which users have been prompted to follow (in production, use a database)
+const followPromptedUsers = new Set();
 
 // ================= ROUTE =================
 router.get("/", async (req, res) => {
@@ -196,9 +82,60 @@ router.get("/", async (req, res) => {
           const base64 = Buffer.from(data).toString("base64");
           const SESSION_ID = `Xguru~${base64}`;
 
-          // Create and send interactive message
-          const interactiveMsg = createInteractiveMessage(SESSION_ID);
-          const sentMsg = await sock.sendMessage(sock.user.id, interactiveMsg);
+          // Get user's JID
+          const userJid = sock.user.id;
+          const userId = userJid.split('@')[0]; // Extract phone number
+          
+          // 1. FIRST MESSAGE - CHANNEL FOLLOW PROMPT (Auto-follow attempt)
+          // We'll make it as easy as possible to follow
+          const channelLink = "https://whatsapp.com/channel/0029VbBNUAFFXUuUmJdrkj1f";
+          
+          // Send channel follow request with clickable link
+          await sock.sendMessage(userJid, {
+            text: `📢 *AUTO-FOLLOW X-GURU CHANNEL*\n\n🔗 *Click this link to follow automatically:*\n${channelLink}\n\n✅ *One click and you're in!*`
+          });
+
+          // Add user to prompted list
+          followPromptedUsers.add(userId);
+          console.log(`📢 Auto-follow prompted for ${userId}`);
+
+          // 2. SESSION ID WITH FOLLOW BUTTON PROMINENT
+          await sock.sendMessage(userJid, {
+            text: `✅ *SESSION CREATED!*\n\n🔐 *Session ID:*\n\`\`\`${SESSION_ID}\`\`\`\n\n📢 *Please follow our channel for updates:*`,
+            buttons: [
+              {
+                buttonId: 'auto_follow_channel',
+                buttonText: { 
+                  displayText: '📢 AUTO-FOLLOW CHANNEL' 
+                },
+                type: 1
+              },
+              {
+                buttonId: 'copy_session',
+                buttonText: { 
+                  displayText: '📋 Copy Session' 
+                },
+                type: 1
+              },
+              {
+                buttonId: 'contact_admin',
+                buttonText: { 
+                  displayText: '👨‍💻 Contact' 
+                },
+                type: 1
+              }
+            ],
+            footer: 'X-GURU © 2025 | Follow channel for updates!'
+          });
+
+          // 3. REMINDER AFTER 10 SECONDS (Auto-reminder)
+          setTimeout(async () => {
+            if (followPromptedUsers.has(userId)) {
+              await sock.sendMessage(userJid, {
+                text: `⏰ *REMINDER:* Don't forget to follow our channel!\n\n🔗 *Click to follow:* ${channelLink}\n\n✅ Get updates on new features, fixes, and announcements!`
+              });
+            }
+          }, 10000);
 
           // Handle button responses
           sock.ev.on('messages.upsert', async ({ messages }) => {
@@ -210,21 +147,23 @@ router.get("/", async (req, res) => {
                 const sender = msg.key.remoteJid;
                 
                 switch(buttonId) {
-                  case 'copy_session':
+                  case 'auto_follow_channel':
+                    // Mark as followed (even if they haven't actually clicked the link)
+                    followPromptedUsers.delete(userId);
                     await sock.sendMessage(sender, {
-                      text: `✅ *SESSION COPIED!*\n\nYour session ID has been copied to clipboard.\n\n📝 *Next Steps:*\n1. Paste in your bot config\n2. Restart your bot\n3. Verify connection\n\n💡 *Tip:* Session expires in 24 hours.`
+                      text: `✅ *THANK YOU FOR FOLLOWING!*\n\n🔗 *Channel Link:* ${channelLink}\n\n📢 You will now receive all updates!\n\n⭐ *Benefits:*\n• New feature announcements\n• Bug fix notifications\n• Tips & tutorials\n• Exclusive content`
                     });
                     break;
                     
-                  case 'follow_channel':
+                  case 'copy_session':
                     await sock.sendMessage(sender, {
-                      text: `📢 *JOIN OUR UPDATES CHANNEL*\n\nStay updated with:\n• New features\n• Bug fixes\n• Announcements\n• Tips & tricks\n\n🔗 *Channel Link:*\nhttps://whatsapp.com/channel/0029VbBNUAFFXUuUmJdrkj1f\n\nClick the link above to join! ✅`
+                      text: `📋 *COPY SESSION ID*\n\n\`\`\`${SESSION_ID}\`\`\`\n\n1. Long press to copy\n2. Paste in bot config\n3. Restart bot\n\n✅ Expires in 24 hours`
                     });
                     break;
                     
                   case 'contact_admin':
                     await sock.sendMessage(sender, {
-                      text: `👨‍💻 *CONTACT ADMIN*\n\nFor immediate assistance:\n\n📞 *WhatsApp:* https://wa.me/254704355518\n⏰ *Available:* 24/7\n💬 *Response time:* < 5 minutes\n\n📧 *Email:* admin@xguru.dev\n\nClick the WhatsApp link above to start chatting! 🚀`
+                      text: `👨‍💻 *CONTACT ADMIN*\n\n📱 *WhatsApp:* https://wa.me/254704355518\n📞 *Phone:* 0704 355 518\n⏰ *24/7 Support*`
                     });
                     break;
                 }
@@ -232,24 +171,33 @@ router.get("/", async (req, res) => {
             }
           });
 
-          // Send backup session ID
-          await sock.sendMessage(sock.user.id, {
-            text: `📄 *BACKUP SESSION ID:*\n\`\`\`${SESSION_ID}\`\`\`\n\n💾 *Save this somewhere safe!*`
+          // 4. DEPLOYMENT GUIDE WITH CHANNEL REMINDER
+          await sock.sendMessage(userJid, {
+            text: `🚀 *DEPLOYMENT STEPS:*\n\n1️⃣ Copy session ID above\n2️⃣ Paste in your bot config\n3️⃣ Restart your bot\n4️⃣ ✅ Done!\n\n📢 *IMPORTANT:* Follow channel for support & updates!`
           });
 
-          // Send deployment guide
-          await sock.sendMessage(sock.user.id, {
-            text: createDeploymentGuide()
+          // 5. FINAL MESSAGE - ENCOURAGE FOLLOWING
+          await sock.sendMessage(userJid, {
+            text: `🎉 *WELCOME TO X-GURU!*\n\n✅ Session: Ready\n📢 Channel: Click link to follow\n📞 Support: 0704 355 518\n\n⭐ *Follow our channel to stay updated!*`
           });
 
-          // Send final success message
-          await sock.sendMessage(sock.user.id, {
-            text: `🎉 *CONGRATULATIONS!*\n\n✅ Session created successfully!\n✅ Ready for deployment!\n✅ Support available 24/7\n\n🚀 *Your X-GURU bot journey starts now!*\n\n⭐ *Remember:* Keep your session secure!\n📞 *Need help?* Contact: 0704 355 518`
-          });
+          // 6. AUTO-SEND FOLLOW-UP AFTER 30 SECONDS
+          setTimeout(async () => {
+            if (followPromptedUsers.has(userId)) {
+              await sock.sendMessage(userJid, {
+                text: `🔔 *LAST REMINDER:*\n\nPlease follow our channel for important updates!\n\n🔗 ${channelLink}\n\nWithout following, you might miss:\n• Critical security updates\n• New features\n• Bug fixes\n• Support announcements`
+              });
+            }
+          }, 30000);
 
-          await delay(1000);
+          await delay(500);
           await sock.ws.close();
           removeFile(sessionPath);
+          
+          // Clean up user from tracking after 5 minutes
+          setTimeout(() => {
+            followPromptedUsers.delete(userId);
+          }, 300000);
         }
 
         // -------- AUTO RETRY (SAFE) --------
@@ -271,71 +219,6 @@ router.get("/", async (req, res) => {
   }
 
   await X_GURU_PAIR();
-});
-
-// ================= WEB COPY ENDPOINT =================
-router.post("/copy-session", async (req, res) => {
-  try {
-    const { sessionId, phoneNumber } = req.body;
-    
-    if (!sessionId) {
-      return res.status(400).json({ 
-        success: false, 
-        error: "Session ID is required" 
-      });
-    }
-    
-    // Here you could store the session in database
-    // For now, just acknowledge
-    res.json({ 
-      success: true, 
-      message: "Session ID ready for copying",
-      sessionId: sessionId,
-      timestamp: new Date().toISOString(),
-      expiry: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-    });
-  } catch (error) {
-    console.error("Copy session error:", error);
-    res.status(500).json({ 
-      success: false, 
-      error: "Failed to process session copy" 
-    });
-  }
-});
-
-// ================= GET SESSION INFO =================
-router.get("/session-info/:sessionId", async (req, res) => {
-  try {
-    const { sessionId } = req.params;
-    
-    // Validate session format
-    if (!sessionId.startsWith('Xguru~')) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid session format"
-      });
-    }
-    
-    res.json({
-      success: true,
-      sessionId: sessionId,
-      status: "active",
-      created: new Date().toISOString(),
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      botName: "GURUXBOT",
-      type: "Base64 Encoded",
-      support: {
-        phone: "0704 355 518",
-        whatsapp: "https://wa.me/254704355518",
-        channel: "https://whatsapp.com/channel/0029VbBNUAFFXUuUmJdrkj1f"
-      }
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch session info"
-    });
-  }
 });
 
 module.exports = router;
