@@ -18,6 +18,39 @@ function removeFile(FilePath) {
     fs.rmSync(FilePath, { recursive: true, force: true });
 }
 
+// Function to compress session data
+function compressSessionData(sessionData) {
+    try {
+        const data = JSON.parse(sessionData);
+        
+        // Remove unnecessary data to make session smaller
+        const compressed = {
+            // Keep only essential credentials
+            creds: {
+                noiseKey: data.creds?.noiseKey,
+                signedIdentityKey: data.creds?.signedIdentityKey,
+                signedPreKey: data.creds?.signedPreKey,
+                registrationId: data.creds?.registrationId,
+                advSecretKey: data.creds?.advSecretKey,
+                processedHistoryMessages: data.creds?.processedHistoryMessages || [],
+                nextPreKeyId: data.creds?.nextPreKeyId,
+                firstUnuploadedPreKeyId: data.creds?.firstUnuploadedPreKeyId,
+                account: data.creds?.account,
+                me: data.creds?.me,
+                accountSettings: data.creds?.accountSettings || { unarchiveChats: false },
+                registered: data.creds?.registered
+            },
+            // Remove keys to save space - they'll be regenerated
+            keys: {}
+        };
+        
+        return JSON.stringify(compressed);
+    } catch (error) {
+        console.error("Compression error:", error);
+        return sessionData; // Return original if compression fails
+    }
+}
+
 router.get('/', async (req, res) => {
     const id = makeid();
     let num = req.query.number;
@@ -39,23 +72,30 @@ router.get('/', async (req, res) => {
             if (!Pair_Code_By_Mbuvi_Tech.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
-               const custom = "GURUXBOT";
-                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num,custom);
+                const custom = "GURUXBOT";
+                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num, custom);
                 if (!res.headersSent) {
                     await res.send({ code });
                 }
             }
 
-// Note: Use my note in every script.
-
-Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
+            Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
             Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
                 const { connection, lastDisconnect } = s;
                 if (connection === 'open') {
                     await delay(5000);
                     let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     await delay(1000);
-                    let b64data = Buffer.from(data).toString('base64');
+                    
+                    // Compress the session data
+                    const originalData = data.toString();
+                    const compressedData = compressSessionData(originalData);
+                    
+                    console.log(`Original size: ${originalData.length} bytes`);
+                    console.log(`Compressed size: ${compressedData.length} bytes`);
+                    console.log(`Reduction: ${Math.round((1 - compressedData.length/originalData.length) * 100)}%`);
+                    
+                    let b64data = Buffer.from(compressedData).toString('base64');
                     let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'Xguru~' + b64data });
 
                     let Mbuvi_MD_TEXT = `
@@ -63,7 +103,8 @@ Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
 █  ⚡ 𝐗 𝐆𝐔𝐑𝐔 ᴘᴀɪʀᴇᴅ ⚡  █
 █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
   
-  ◈ ᴛʏᴘᴇ   » Base64
+  ◈ Session size: ${b64data.length} chars
+  ◈ ᴛʏᴘᴇ   » Base64 (Compressed)
   ◈ sᴛᴀᴛᴜs  » Online
   ◈ owɴᴇʀ  » 𝐆𝐮𝐫𝐮𝐓𝐞𝐜𝐡
   
