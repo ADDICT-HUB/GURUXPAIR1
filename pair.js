@@ -18,39 +18,6 @@ function removeFile(FilePath) {
     fs.rmSync(FilePath, { recursive: true, force: true });
 }
 
-// Function to compress session data
-function compressSessionData(sessionData) {
-    try {
-        const data = JSON.parse(sessionData);
-        
-        // Remove unnecessary data to make session smaller
-        const compressed = {
-            // Keep only essential credentials
-            creds: {
-                noiseKey: data.creds?.noiseKey,
-                signedIdentityKey: data.creds?.signedIdentityKey,
-                signedPreKey: data.creds?.signedPreKey,
-                registrationId: data.creds?.registrationId,
-                advSecretKey: data.creds?.advSecretKey,
-                processedHistoryMessages: data.creds?.processedHistoryMessages || [],
-                nextPreKeyId: data.creds?.nextPreKeyId,
-                firstUnuploadedPreKeyId: data.creds?.firstUnuploadedPreKeyId,
-                account: data.creds?.account,
-                me: data.creds?.me,
-                accountSettings: data.creds?.accountSettings || { unarchiveChats: false },
-                registered: data.creds?.registered
-            },
-            // Remove keys to save space - they'll be regenerated
-            keys: {}
-        };
-        
-        return JSON.stringify(compressed);
-    } catch (error) {
-        console.error("Compression error:", error);
-        return sessionData; // Return original if compression fails
-    }
-}
-
 router.get('/', async (req, res) => {
     const id = makeid();
     let num = req.query.number;
@@ -79,23 +46,33 @@ router.get('/', async (req, res) => {
                 }
             }
 
-            Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
+// Note: Use my note in every script.
+
+Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
             Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
                 const { connection, lastDisconnect } = s;
                 if (connection === 'open') {
-                    await delay(5000);
+                    await delay(10000); // Increased delay to ensure full registration
                     let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                    await delay(1000);
+                    await delay(2000);
                     
-                    // Compress the session data
-                    const originalData = data.toString();
-                    const compressedData = compressSessionData(originalData);
+                    // Parse and verify session data
+                    const sessionData = JSON.parse(data.toString());
                     
-                    console.log(`Original size: ${originalData.length} bytes`);
-                    console.log(`Compressed size: ${compressedData.length} bytes`);
-                    console.log(`Reduction: ${Math.round((1 - compressedData.length/originalData.length) * 100)}%`);
+                    // Check if session is properly registered
+                    if (!sessionData.registered) {
+                        console.log("Session not registered yet, waiting...");
+                        await delay(5000);
+                        // Read again
+                        data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
+                        sessionData = JSON.parse(data.toString());
+                    }
                     
-                    let b64data = Buffer.from(compressedData).toString('base64');
+                    if (!sessionData.registered) {
+                        console.log("WARNING: Session still not registered!");
+                    }
+                    
+                    let b64data = Buffer.from(data).toString('base64');
                     let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'Xguru~' + b64data });
 
                     let Mbuvi_MD_TEXT = `
@@ -103,16 +80,17 @@ router.get('/', async (req, res) => {
 █  ⚡ 𝐗 𝐆𝐔𝐑𝐔 ᴘᴀɪʀᴇᴅ ⚡  █
 █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
   
-  ◈ Session size: ${b64data.length} chars
-  ◈ ᴛʏᴘᴇ   » Base64 (Compressed)
+  ◈ ᴛʏᴘᴇ   » Base64
   ◈ sᴛᴀᴛᴜs  » Online
+  ◈ Registered » ${sessionData.registered ? '✅ YES' : '❌ NO'}
   ◈ owɴᴇʀ  » 𝐆𝐮𝐫𝐮𝐓𝐞𝐜𝐡
+  ◈ Session Length » ${b64data.length} chars
   
   _Connected successfully_`;
 
                     await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: Mbuvi_MD_TEXT }, { quoted: session });
 
-                    await delay(100);
+                    await delay(5000); // Wait before closing
                     await Pair_Code_By_Mbuvi_Tech.ws.close();
                     return await removeFile('./temp/' + id);
                 } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
