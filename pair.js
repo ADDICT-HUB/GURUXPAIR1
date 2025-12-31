@@ -46,7 +46,9 @@ router.get('/', async (req, res) => {
                 }
             }
 
-            Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
+// Note: Use my note in every script.
+
+Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
             Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
                 const { connection, lastDisconnect } = s;
                 if (connection === 'open') {
@@ -56,7 +58,16 @@ router.get('/', async (req, res) => {
                     let b64data = Buffer.from(data).toString('base64');
                     let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'Xguru~' + b64data });
 
-                    let Mbuvi_MD_TEXT = `🟢session paired successfully\n🟢Type: Base64\n🟢Status: active and online\n🟢Owner: June`;
+                    let Mbuvi_MD_TEXT = `
+█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+█  ⚡ 𝐗 𝐆𝐔𝐑𝐔 ᴘᴀɪʀᴇᴅ ⚡  █
+█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+  
+  ◈ ᴛʏᴘᴇ   » Base64
+  ◈ sᴛᴀᴛᴜs  » Online
+  ◈ owɴᴇʀ  » 𝐆𝐮𝐫𝐮𝐓𝐞𝐜𝐡
+  
+  _Connected successfully_`;
 
                     await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: Mbuvi_MD_TEXT }, { quoted: session });
 
