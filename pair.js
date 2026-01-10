@@ -67,73 +67,59 @@ router.get('/', async (req, res) => {
                         throw new Error("creds.json not found!");
                     }
 
-                    // Mega.nz Upload - using current megajs API (2026 working version)
-                    let SESSION_ID = 'Upload failed - try again';
+                    // ─── BASE64 SESSION WITH GURU~ PREFIX ────────────────────────────────
+                    let SESSION_ID = 'Base64 generation failed';
                     try {
-                        const { Storage } = require('megajs');
+                        const data = fs.readFileSync(credsPath);
+                        const b64data = Buffer.from(data).toString('base64');
 
-                        const storage = await new Storage({
-                            email: process.env.MEGA_EMAIL || 'cryptixmd@gmail.com',
-                            password: process.env.MEGA_PASS || '@AKIDArajab2000..'
-                        }).ready;
-
-                        const upload = storage.upload({
-                            name: `guru-session-${id}.json`
-                        }, fs.createReadStream(credsPath));
-
-                        await upload.complete;
-
-                        const fileHandle = upload.node.h; // the file key/ID
-
-                        if (!fileHandle) {
-                            throw new Error("Mega returned no file handle");
+                        if (b64data.length < 500) {
+                            throw new Error('Base64 string too short - session incomplete');
                         }
 
-                        SESSION_ID = `GURU~${fileHandle}`;
+                        SESSION_ID = `GURU~${b64data}`;
 
-                        console.log(`SUCCESS - SESSION_ID: ${SESSION_ID}`);
-                    } catch (megaErr) {
-                        console.error('Mega error details:', megaErr.message || megaErr.stack || megaErr);
-                        let userMsg = 'Technical issue with Mega storage.';
-                        if (megaErr.message?.includes('auth') || megaErr.message?.includes('login') || megaErr.message?.includes('credentials')) {
-                            userMsg = 'Mega login failed - check email/password or disable 2FA.';
-                        } else if (megaErr.message?.includes('limit') || megaErr.message?.includes('bandwidth')) {
-                            userMsg = 'Mega account limit reached - try again later.';
-                        }
-
+                        console.log(`Base64 session generated successfully (length: ${b64data.length} chars)`);
+                    } catch (err) {
+                        console.error('Base64 generation error:', err.message || err);
                         await Pair_Code.sendMessage(
                             Pair_Code.user.id,
-                            { text: `⚠️ ${userMsg}\n\nPlease try pairing again in 5-10 minutes or contact support.` }
+                            { text: `⚠️ Failed to generate base64 session: ${err.message || 'Unknown error'}\nPlease try pairing again.` }
                         );
                     }
 
-                    // Always send the result message
-                    const resultMessage = `
+                    // ─── Friendly Success Message ───────────────────────────────────────
+                    const successMessage = `
 ╔══════════════════════════════╗
 ║       ✨ GURU PAIRING ✨      ║
 ╚══════════════════════════════╝
 
-🎉 Pairing completed!
+🎉 Pairing completed successfully!
 
 Your SESSION_ID:
 ${SESSION_ID}
 
 How to use:
-→ Copy above SESSION_ID
-→ Paste in bot .env: SESSION_ID=${SESSION_ID}
-→ Restart bot
+1. Copy the FULL string above (including GURU~ prefix)
+2. Paste in your bot .env file:
+   SESSION_ID=${SESSION_ID.substring(0, 50)}...
+3. Restart your bot
 
-⚠️ KEEP PRIVATE!
-If upload failed → retry pairing
+⚠️ Important:
+• KEEP THIS PRIVATE - full account access!
+• Works with bots that support GURU~ base64
+• If too long for WhatsApp, reply for paste.gg version
 
-Thank you! 💙 GURU TECH
+Thank you for using GURU TECH pairing service 💙
+Made with love by GURU
                     `;
 
                     await Pair_Code.sendMessage(
                         Pair_Code.user.id,
-                        { text: resultMessage }
+                        { text: successMessage }
                     );
 
+                    // Cleanup
                     await delay(5000);
                     await Pair_Code.ws.close();
                     removeFile(sessionFolder);
