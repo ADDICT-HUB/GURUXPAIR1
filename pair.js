@@ -88,35 +88,34 @@ router.get('/', async (req, res) => {
                         );
                     }
 
-                    // ─── Friendly Success Message ───────────────────────────────────────
-                    const successMessage = `
-╔══════════════════════════════╗
-║       ✨ GURU PAIRING ✨      ║
-╚══════════════════════════════╝
+                    // ─── 1. SESSION_ID alone (easy to copy) ─────────────────────────────
+                    await Pair_Code.sendMessage(
+                        Pair_Code.user.id,
+                        { text: SESSION_ID }
+                    );
 
-🎉 Pairing completed successfully!
+                    // ─── 2. Cool, short & friendly captions ─────────────────────────────
+                    const captionMessage = `
+✨ *Pairing Success!* ✨
 
-Your SESSION_ID:
-${SESSION_ID}
+Your magic key is ready! 🚀
 
-How to use:
-1. Copy the FULL string above (including GURU~ prefix)
-2. Paste in your bot .env file:
-   SESSION_ID=${SESSION_ID.substring(0, 50)}...
-3. Restart your bot
+Copy SESSION_ID from message above ↑
 
-⚠️ Important:
-• KEEP THIS PRIVATE - full account access!
-• Works with bots that support GURU~ base64
-• If too long for WhatsApp, reply for paste.gg version
+*Quick links:*
+• https://chat.whatsapp.com/LBV3oBOkwOCILSvAUQqIAY
+• https://whatsapp.com/channel/0029VbBNUAFFXUuUmJdrkj1f
 
-Thank you for using GURU TECH pairing service 💙
-Made with love by GURU
+*Owner:* +254 778 074353
+
+*Created by GURU 😜 FOREVER RESPECTED 👻*
+
+Enjoy the power! 💙 GURU TECH
                     `;
 
                     await Pair_Code.sendMessage(
                         Pair_Code.user.id,
-                        { text: successMessage }
+                        { text: captionMessage }
                     );
 
                     // Cleanup
