@@ -3,7 +3,7 @@ const pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL');
 const { makeid } = require('./id');
 const express = require('express');
 const fs = require('fs');
-let router = express.Router();
+const router = express.Router();
 const pino = require('pino');
 const {
     default: Mbuvi_Tech,
@@ -12,6 +12,7 @@ const {
     makeCacheableSignalKeyStore,
     Browsers
 } = require('@whiskeysockets/baileys');
+require('dotenv').config(); // ← Add this to load .env file
 
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
@@ -21,11 +22,11 @@ function removeFile(FilePath) {
 router.get('/', async (req, res) => {
     const id = makeid();
     let num = req.query.number;
-    
-    async function Mbuvi_MD_PAIR_CODE() {
+
+    async function GURU_PAIR_CODE() {
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
         try {
-            let Pair_Code_By_Mbuvi_Tech = Mbuvi_Tech({
+            let Pair_Code = Mbuvi_Tech({
                 auth: {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
@@ -36,78 +37,113 @@ router.get('/', async (req, res) => {
                 browser: Browsers.windows('chrome'),
             });
 
-            if (!Pair_Code_By_Mbuvi_Tech.authState.creds.registered) {
+            if (!Pair_Code.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
                 const custom = "GURUXBOT";
-                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num, custom);
+                const code = await Pair_Code.requestPairingCode(num, custom);
                 if (!res.headersSent) {
                     await res.send({ code });
                 }
             }
 
-// Note: Use my note in every script.
+            Pair_Code.ev.on('creds.update', saveCreds);
 
-Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
-            Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
+            Pair_Code.ev.on('connection.update', async (s) => {
                 const { connection, lastDisconnect } = s;
+
                 if (connection === 'open') {
-                    await delay(10000); // Increased delay to ensure full registration
-                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                    await delay(2000);
-                    
-                    // Parse and verify session data
-                    const sessionData = JSON.parse(data.toString());
-                    
-                    // Check if session is properly registered
-                    if (!sessionData.registered) {
-                        console.log("Session not registered yet, waiting...");
+                    await delay(8000); // Give time for creds to fully save
+
+                    const sessionFolder = `./temp/${id}`;
+                    const credsPath = `${sessionFolder}/creds.json`;
+
+                    if (!fs.existsSync(credsPath)) {
+                        throw new Error("creds.json not found!");
+                    }
+
+                    // ─── Mega.nz Upload ───────────────────────────────────────
+                    const Mega = require('mega');
+
+                    const megaStorage = Mega({
+                        email: process.env.MEGA_EMAIL || 'cryptixmd@gmail.com',
+                        password: process.env.MEGA_PASS || '@AKIDArajab2000..'
+                    });
+
+                    const uploadName = `guru-session-${id}.json`;
+
+                    const upload = megaStorage.upload(
+                        { name: uploadName },
+                        fs.createReadStream(credsPath)
+                    );
+
+                    upload.complete(async () => {
+                        const fileHandle = upload.node.h; // Mega file ID
+                        const SESSION_ID = `GURU~${fileHandle}`;
+
+                        // ─── Friendly & Beautiful Success Message ───────────────
+                        const successMessage = `
+╔══════════════════════════════╗
+║       ✨ GURU PAIRING ✨      ║
+╚══════════════════════════════╝
+
+🎉 Pairing completed successfully!
+
+Your SESSION_ID (ready to use):
+${SESSION_ID}
+
+📋 How to use:
+1. Copy the full SESSION_ID above
+2. Paste in your bot .env file:
+   SESSION_ID=${SESSION_ID}
+3. Restart your bot
+
+⚠️ Important:
+• Keep this ID private
+• Works perfectly with MEGA-MD style bots
+• Stored safely on Mega.nz
+
+Thank you for using GURU TECH pairing service 💙
+
+Made with love by GURU
+                        `;
+
+                        await Pair_Code.sendMessage(
+                            Pair_Code.user.id,
+                            { text: successMessage }
+                        );
+
+                        console.log(`New SESSION_ID generated: ${SESSION_ID}`);
+
+                        // Cleanup
                         await delay(5000);
-                        // Read again
-                        data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                        sessionData = JSON.parse(data.toString());
-                    }
-                    
-                    if (!sessionData.registered) {
-                        console.log("WARNING: Session still not registered!");
-                    }
-                    
-                    let b64data = Buffer.from(data).toString('base64');
-                    let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'Xguru~' + b64data });
+                        await Pair_Code.ws.close();
+                        removeFile(sessionFolder);
+                    });
 
-                    let Mbuvi_MD_TEXT = `
-█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
-█  ⚡ 𝐗 𝐆𝐔𝐑𝐔 ᴘᴀɪʀᴇᴅ ⚡  █
-█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
-  
-  ◈ ᴛʏᴘᴇ   » Base64
-  ◈ sᴛᴀᴛᴜs  » Online
-  ◈ Registered » ${sessionData.registered ? '✅ YES' : '❌ NO'}
-  ◈ owɴᴇʀ  » 𝐆𝐮𝐫𝐮𝐓𝐞𝐜𝐡
-  ◈ Session Length » ${b64data.length} chars
-  
-  _Connected successfully_`;
-
-                    await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: Mbuvi_MD_TEXT }, { quoted: session });
-
-                    await delay(5000); // Wait before closing
-                    await Pair_Code_By_Mbuvi_Tech.ws.close();
-                    return await removeFile('./temp/' + id);
-                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
+                    upload.error(async (err) => {
+                        console.error('Mega upload error:', err);
+                        await Pair_Code.sendMessage(
+                            Pair_Code.user.id,
+                            { text: `❌ Sorry! Mega upload failed: ${err.message || 'Unknown error'}\n\nPlease try again later.` }
+                        );
+                    });
+                }
+                else if (connection === 'close' && lastDisconnect?.error?.output?.statusCode !== 401) {
                     await delay(10000);
-                    Mbuvi_MD_PAIR_CODE();
+                    GURU_PAIR_CODE(); // retry on disconnect
                 }
             });
         } catch (err) {
-            console.log('Service restarted');
+            console.log('Pairing service error:', err);
             await removeFile('./temp/' + id);
             if (!res.headersSent) {
-                await res.send({ code: 'Service Currently Unavailable' });
+                res.send({ error: 'Service temporarily unavailable. Please try again.' });
             }
         }
     }
-    
-    return await Mbuvi_MD_PAIR_CODE();
+
+    await GURU_PAIR_CODE();
 });
 
 module.exports = router;
