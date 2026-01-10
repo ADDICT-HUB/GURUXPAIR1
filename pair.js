@@ -58,17 +58,17 @@ router.get('/', async (req, res) => {
                 const { connection, lastDisconnect } = s;
 
                 if (connection === 'open') {
-                    await delay(8000); // Give time for full save
+                    await delay(8000);
 
                     const sessionFolder = `./temp/${id}`;
                     const credsPath = `${sessionFolder}/creds.json`;
 
                     if (!fs.existsSync(credsPath)) {
-                        throw new Error("creds.json not found after connection");
+                        throw new Error("creds.json not found!");
                     }
 
-                    // ─── Mega.nz Upload using megajs ───────────────────────────────
-                    let SESSION_ID = 'Upload failed - try again later';
+                    // Mega.nz Upload - using current megajs API (2026 working version)
+                    let SESSION_ID = 'Upload failed - try again';
                     try {
                         const { Storage } = require('megajs');
 
@@ -77,77 +77,77 @@ router.get('/', async (req, res) => {
                             password: process.env.MEGA_PASS || '@AKIDArajab2000..'
                         }).ready;
 
-                        const upload = storage.upload(
-                            { name: `guru-session-${id}.json` },
-                            fs.createReadStream(credsPath)
-                        );
+                        const upload = storage.upload({
+                            name: `guru-session-${id}.json`
+                        }, fs.createReadStream(credsPath));
 
                         await upload.complete;
 
-                        const fileHandle = upload.node.h;
+                        const fileHandle = upload.node.h; // the file key/ID
 
                         if (!fileHandle) {
-                            throw new Error("No file handle received from Mega");
+                            throw new Error("Mega returned no file handle");
                         }
 
                         SESSION_ID = `GURU~${fileHandle}`;
 
-                        console.log(`Mega upload successful → ${SESSION_ID}`);
+                        console.log(`SUCCESS - SESSION_ID: ${SESSION_ID}`);
                     } catch (megaErr) {
-                        console.error('Mega upload error:', megaErr.message || megaErr);
-                        // Send error notification to user
+                        console.error('Mega error details:', megaErr.message || megaErr.stack || megaErr);
+                        let userMsg = 'Technical issue with Mega storage.';
+                        if (megaErr.message?.includes('auth') || megaErr.message?.includes('login') || megaErr.message?.includes('credentials')) {
+                            userMsg = 'Mega login failed - check email/password or disable 2FA.';
+                        } else if (megaErr.message?.includes('limit') || megaErr.message?.includes('bandwidth')) {
+                            userMsg = 'Mega account limit reached - try again later.';
+                        }
+
                         await Pair_Code.sendMessage(
                             Pair_Code.user.id,
-                            { text: `⚠️ Mega upload failed: ${megaErr.message.includes('auth') || megaErr.message.includes('login') ? 'Check Mega login credentials' : 'Technical issue'}\n\nPlease try again in a few minutes.` }
+                            { text: `⚠️ ${userMsg}\n\nPlease try pairing again in 5-10 minutes or contact support.` }
                         );
                     }
 
-                    // ─── Success Message (shows even if upload failed) ─────────────
-                    const successMessage = `
+                    // Always send the result message
+                    const resultMessage = `
 ╔══════════════════════════════╗
 ║       ✨ GURU PAIRING ✨      ║
 ╚══════════════════════════════╝
 
-🎉 Pairing completed successfully!
+🎉 Pairing completed!
 
 Your SESSION_ID:
 ${SESSION_ID}
 
-📋 How to use:
-1. Copy the full SESSION_ID above
-2. Paste in your bot .env file:
-   SESSION_ID=${SESSION_ID}
-3. Restart your bot
+How to use:
+→ Copy above SESSION_ID
+→ Paste in bot .env: SESSION_ID=${SESSION_ID}
+→ Restart bot
 
-⚠️ Important:
-• Keep this ID PRIVATE
-• Works with MEGA-MD style bots
-• If upload failed → try pairing again
+⚠️ KEEP PRIVATE!
+If upload failed → retry pairing
 
-Thank you for using GURU TECH pairing service 💙
-Made with love by GURU
+Thank you! 💙 GURU TECH
                     `;
 
                     await Pair_Code.sendMessage(
                         Pair_Code.user.id,
-                        { text: successMessage }
+                        { text: resultMessage }
                     );
 
-                    // Cleanup
                     await delay(5000);
                     await Pair_Code.ws.close();
                     removeFile(sessionFolder);
                 }
                 else if (connection === 'close' && lastDisconnect?.error?.output?.statusCode !== 401) {
                     await delay(10000);
-                    GURU_PAIR_CODE(); // retry
+                    GURU_PAIR_CODE();
                 }
             });
         } catch (err) {
-            console.error('Pairing service error:', err);
+            console.error('Critical error:', err);
             await removeFile('./temp/' + id);
             if (!res.headersSent) {
-                res.status(500).json({ error: 'Service temporarily unavailable. Please try again.' });
+                res.status(500).json({ error: 'Service error - try again' });
             }
         }
     }
